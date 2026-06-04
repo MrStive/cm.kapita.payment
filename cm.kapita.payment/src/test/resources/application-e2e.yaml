@@ -1,0 +1,36 @@
+---
+spring:
+  cloud:
+    bus:
+      enabled: false
+    config:
+      enabled: false
+      import-check:
+        enabled: false
+    stream:
+      enabled: false
+  liquibase:
+    change-log: "classpath:db/changelog/db.changelog-master.xml"
+    contexts: "e2e"
+    enabled: true
+  kafka:
+    consumer:
+      group-id: "payment-e2e"
+    listener:
+      auto-startup: true
+    producer:
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      value-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+eureka:
+  client:
+    enabled: false
+kapita:
+  messaging:
+    user-created:
+      topic: "authentis.user.created"
+  security:
+    expose-docs: true
+    jwt:
+      issuer: "http://auth-service.local"
+      audience: "kapita-api"
+      public-key-location: "classpath:security/jwt-public.pem"

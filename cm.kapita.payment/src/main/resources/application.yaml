@@ -1,0 +1,47 @@
+---
+spring:
+  application:
+    name: "payment"
+  config:
+    import: "${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:8888}"
+  datasource:
+    url: "jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:payment_db}"
+    username: "${DB_USER:payment}"
+    password: "${DB_PASSWORD:change-me}"
+  kafka:
+    bootstrap-servers: "${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
+    consumer:
+      group-id: "${KAFKA_CONSUMER_GROUP_ID:payment-service}"
+    listener:
+      missing-topics-fatal: false
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    properties:
+      eclipselink.weaving: "false"
+      eclipselink.ddl-generation: "none"
+      eclipselink.target-database: "PostgreSQL"
+      eclipselink.logging.level: "WARNING"
+      eclipselink.logging.level.sql: "FINE"
+  liquibase:
+    change-log: "classpath:db/changelog/db.changelog-master.xml"
+kapita:
+  messaging:
+    user-created:
+      topic: "${KAFKA_USER_CREATED_TOPIC:authentis.user.created}"
+  security:
+    jwt:
+      issuer: "${ISSUER_URI:http://localhost:8080/realms/authentis-user}"
+      audience: "${JWT_AUDIENCE:kapita-api}"
+      jwk-set-uri: "${JWK_SET_URI:http://localhost:8080/realms/authentis-user/protocol/openid-connect/certs}"
+logging:
+  level:
+    org.springframework.security: "INFO"
+    org.springframework.web: "INFO"
+eureka:
+  client:
+    enabled: "${EUREKA_CLIENT_ENABLED:true}"
+    service-url:
+      defaultZone: "${EUREKA_DEFAULT_ZONE:http://localhost:8761/eureka}"
+  instance:
+    prefer-ip-address: true

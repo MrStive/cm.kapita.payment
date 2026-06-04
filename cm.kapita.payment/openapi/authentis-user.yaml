@@ -1,0 +1,216 @@
+---
+openapi: "3.0.3"
+info:
+  title: "cm.domeni.authentis-users"
+  description: "Demo use open APi for generate REST API endpoints"
+  version: "0.0.1"
+servers:
+  - url: "https://localhost:8089"
+  - url: "http://localhost:8089"
+tags:
+  - name: "User"
+    description: "Everything about the users"
+paths: {}
+components:
+  schemas:
+    EmailAddressDTO:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          description: "value of the email address"
+    CivilityDTO:
+      type: "string"
+      enum:
+        - "MISTER"
+        - "MADAM"
+    PhoneNumberDTO:
+      type: "object"
+      properties:
+        countryCode:
+          type: "string"
+          description: "the international code for the country"
+          example: "237 for Cameroon"
+        number:
+          type: "string"
+          description: "the phone number"
+          example: 653492410
+    DomainEventType:
+      type: "string"
+      enum:
+        - "USER_CREATED"
+        - "USER_UPDATED"
+        - "USER_ACTIVATED"
+        - "USER_DEACTIVATED"
+        - "USER_ROLES_ADDED"
+        - "USER_ROLES_REMOVED"
+    UserCreatedEventDTO:
+      type: "object"
+      required:
+        - "id"
+        - "username"
+        - "enabled"
+      properties:
+        id:
+          type: "string"
+          description: "identifier"
+          format: "uuid"
+        civility:
+          $ref: "#/components/schemas/CivilityDTO"
+        firstname:
+          type: "string"
+          description: "firstname of user"
+        lastname:
+          type: "string"
+          description: "lastname of user"
+        phoneNumber:
+          $ref: "#/components/schemas/PhoneNumberDTO"
+        username:
+          type: "string"
+          description: "username's user"
+        email:
+          $ref: "#/components/schemas/EmailAddressDTO"
+        enabled:
+          type: "boolean"
+          description: "active user"
+        profile:
+          type: "string"
+          description: "user's information as json"
+        picture:
+          type: "string"
+          description: "the user's profile picture"
+          format: "uuid"
+        isBlocked:
+          type: "boolean"
+          description: "specifies if the user is blocked or not"
+        createdAt:
+          type: "string"
+          format: "date-time"
+          description: "specify the user's creation date"
+        reference:
+          type: "string"
+    UserUpdatedEventDTO:
+      type: "object"
+      required:
+        - "id"
+        - "username"
+        - "enabled"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        firstname:
+          type: "string"
+          description: "firstname of user"
+        lastname:
+          type: "string"
+        username:
+          type: "string"
+          description: "username's user"
+        email:
+          $ref: "#/components/schemas/EmailAddressDTO"
+        enabled:
+          type: "boolean"
+          description: "active user"
+    UserDeactivatedEventDTO:
+      type: "object"
+      required:
+        - "id"
+        - "enabled"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        enabled:
+          type: "boolean"
+          description: "active user"
+    UserRolesAddedEventDTO:
+      type: "object"
+      required:
+        - "id"
+        - "newRolesIds"
+      properties:
+        userId:
+          type: "string"
+          description: "identifier"
+          format: "uuid"
+        newRoleIds:
+          type: "array"
+          items:
+            type: "string"
+            format: "uuid"
+    UserRolesRemovedEventDTO:
+      type: "object"
+      required:
+        - "id"
+        - "removedRolesIds"
+      properties:
+        userId:
+          type: "string"
+          description: "identifier"
+          format: "uuid"
+        removedRolesIds:
+          type: "array"
+          items:
+            type: "string"
+            format: "uuid"
+    UserCreatedEventEnvelopeDTO:
+      type: "object"
+      required:
+        - "eventId"
+        - "eventType"
+        - "occurredAt"
+        - "payload"
+      properties:
+        eventId:
+          type: "string"
+          format: "uuid"
+          description: "unique event identifier"
+        eventType:
+          $ref: "#/components/schemas/DomainEventType"
+        occurredAt:
+          type: "string"
+          format: "date-time"
+          description: "timestamp when the event occurred"
+        payload:
+          $ref: "#/components/schemas/UserCreatedEventDTO"
+    UserUpdatedEventEnvelopeDTO:
+      type: "object"
+      required:
+        - "eventId"
+        - "eventType"
+        - "occurredAt"
+        - "payload"
+      properties:
+        eventId:
+          type: "string"
+          format: "uuid"
+          description: "unique event identifier"
+        eventType:
+          $ref: "#/components/schemas/DomainEventType"
+        occurredAt:
+          type: "string"
+          format: "date-time"
+          description: "timestamp when the event occurred"
+        payload:
+          $ref: "#/components/schemas/UserUpdatedEventDTO"
+    UserDeactivatedEventEnvelopeDTO:
+      type: "object"
+      required:
+        - "eventId"
+        - "eventType"
+        - "occurredAt"
+        - "payload"
+      properties:
+        eventId:
+          type: "string"
+          format: "uuid"
+          description: "unique event identifier"
+        eventType:
+          $ref: "#/components/schemas/DomainEventType"
+        occurredAt:
+          type: "string"
+          format: "date-time"
+          description: "timestamp when the event occurred"
+        payload:
+          $ref: "#/components/schemas/UserDeactivatedEventDTO"
