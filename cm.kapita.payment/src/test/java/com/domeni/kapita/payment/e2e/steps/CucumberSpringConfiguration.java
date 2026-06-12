@@ -1,4 +1,4 @@
-package com.domeni.kapita.payment.e2e;
+package com.domeni.kapita.payment.e2e.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;

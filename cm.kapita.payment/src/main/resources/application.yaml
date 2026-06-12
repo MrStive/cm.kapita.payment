@@ -29,11 +29,18 @@ kapita:
   messaging:
     user-created:
       topic: "${KAFKA_USER_CREATED_TOPIC:authentis.user.created}"
+    payment-status:
+      topic: "${KAFKA_PAYMENT_STATUS_TOPIC:payment.status.updated}"
   security:
     jwt:
       issuer: "${ISSUER_URI:http://localhost:8080/realms/authentis-user}"
       audience: "${JWT_AUDIENCE:kapita-api}"
       jwk-set-uri: "${JWK_SET_URI:http://localhost:8080/realms/authentis-user/protocol/openid-connect/certs}"
+app:
+  monetbil:
+    base-url: "${MONETBIL_BASE_URL:https://api.monetbil.com}"
+    service-key: "${MONETBIL_SERVICE_KEY:change-me}"
+    webhook-base-url: "${MONETBIL_WEBHOOK_BASE_URL:https://api.kapita.com/monetbil/webhook}"
 logging:
   level:
     org.springframework.security: "INFO"

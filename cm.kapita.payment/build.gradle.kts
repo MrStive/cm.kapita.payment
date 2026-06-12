@@ -163,8 +163,7 @@ dependencies {
     testAnnotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
     // Security
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("javax.money:money-api:1.1")
-    implementation("org.javamoney.moneta:moneta-core:1.4.5")
+    implementation("org.javamoney:moneta:1.4.4")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
@@ -385,6 +384,29 @@ tasks.register<GenerateTask>("mainOpenApiGenerate") {
     }
 }
 
+tasks.register<GenerateTask>("monetbilOpenApiGenerate") {
+    generatorName = "spring"
+    templateDir.set("$rootDir/openapi/templates/spring-http-interface")
+    inputSpec = "$rootDir/openapi/monetbil.yaml"
+    outputDir =
+        layout.buildDirectory
+            .dir("generated/sources/monetbil")
+            .get()
+            .asFile.path
+    apiPackage = "com.domeni.kapita.generated.monetbil.api"
+    modelPackage = "com.domeni.kapita.generated.monetbil.dto"
+    configOptions =
+        mapOf(
+            "dateLibrary" to "java8-localdatetime",
+            "library" to "spring-boot",
+            "interfaceOnly" to "true",
+            "useTags" to "true",
+            "skipDefaultInterface" to "true",
+            "useSpringBoot3" to "true",
+            "openApiNullable" to "false",
+        )
+}
+
 tasks.register<GenerateTask>("authentisUserEventOpenApiGenerate") {
     generatorName = "spring"
     templateDir.set("$rootDir/openapi/templates/spring-boot")
@@ -437,6 +459,12 @@ tasks.compileJava.get().dependsOn(
 sourceSets.main.get().java.srcDir(
     layout.buildDirectory
         .dir("generated/sources/openapi/src/main/java")
+        .get()
+        .asFile.path,
+)
+sourceSets.main.get().java.srcDir(
+    layout.buildDirectory
+        .dir("generated/sources/monetbil/src/main/java")
         .get()
         .asFile.path,
 )

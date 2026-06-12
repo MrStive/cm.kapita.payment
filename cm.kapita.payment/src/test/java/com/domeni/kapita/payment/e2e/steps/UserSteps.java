@@ -1,4 +1,4 @@
-package com.domeni.kapita.payment.e2e;
+package com.domeni.kapita.payment.e2e.steps;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

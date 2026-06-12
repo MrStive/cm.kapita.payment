@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: "Monetbil API"
+  description: "API for processing payments"
+  version: "v1"
+servers:
+  - url: "https://api.monetbil.com"
+tags:
+  - name: "Payment"
+    description: "all features concerning the payment"
+  - name: "Widget"
+    description: "Monetbil Widget API v2.1"
+paths:
+  /widget/v2.1/{serviceKey}:
+    post:
+      summary: "Generate a payment link with Monetbil Widget API v2.1"
+      description: "This function generates a payment link for the user to complete the payment."
+      operationId: "generatePaymentLink"
+      tags:
+        - "Monetbil"
+      parameters:
+        - name: serviceKey
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WidgetPaymentRequestDto"
+      responses:
+        '200':
+          description: "Successfully response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WidgetPaymentResponseDto"
+components:
+  schemas:
+    WidgetPaymentRequestDto:
+      type: "object"
+      required:
+        - "amount"
+        - "currency"
+        - "payment_ref"
+      properties:
+        amount:
+          type: number
+        currency:
+          type: "string"
+        payment_ref:
+          type: "string"
+        phone:
+          type: "string"
+        return_url:
+          type: "string"
+        notify_url:
+          type: "string"
+    WidgetPaymentResponseDto:
+      type: "object"
+      properties:
+        success:
+          type: boolean
+        payment_url:
+          type: "string"
+        payment_id:
+          type: "string"
+        message:
+          type: "string"
