@@ -26,5 +26,8 @@ eureka:
   client:
     enabled: false
 kapita:
+  messaging:
+    payment-status:
+      topic: "test.payment.status.updated"
   security:
     expose-docs: true
