@@ -122,6 +122,17 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              properties:
+                status:
+                  type: string
+                amount:
+                  type: string
+                currency:
+                  type: string
+                transaction_id:
+                  type: string
+                sign:
+                  type: string
               additionalProperties:
                 type: string
       responses:
@@ -184,10 +195,11 @@ components:
       - "description"
       - "phoneNumber"
       - "provider"
+      - "idempotencyKey"
       properties:
         amount:
           type: "number"
-          format: "double"
+          format: "decimal"
         currency:
           type: "string"
         description:
@@ -197,6 +209,8 @@ components:
         provider:
           type: "string"
           enum: ["MONETBIL"]
+        idempotencyKey:
+          type: "string"
     PaymentResponseDTO:
       type: "object"
       required:

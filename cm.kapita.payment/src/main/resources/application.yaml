@@ -40,6 +40,7 @@ app:
   monetbil:
     base-url: "${MONETBIL_BASE_URL:https://api.monetbil.com}"
     service-key: "${MONETBIL_SERVICE_KEY:change-me}"
+    service-secret: "${MONETBIL_SERVICE_SECRET:change-me}"
     webhook-base-url: "${MONETBIL_WEBHOOK_BASE_URL:https://api.kapita.com/monetbil/webhook}"
 logging:
   level:

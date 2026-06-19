@@ -50,14 +50,17 @@ public class UserFactoryImpl implements UserFactory {
     }
 
     private @Nullable UserFirstName mapFirstName(@Nullable String value) {
-        return value == null ? null : new UserFirstName(value);
+        UserFirstName firstName = new UserFirstName(value);
+        return firstName.getValue() == null ? null : firstName;
     }
 
     private @Nullable UserLastName mapLastName(@Nullable String value) {
-        return value == null ? null : new UserLastName(value);
+        UserLastName lastName = new UserLastName(value);
+        return lastName.getValue() == null ? null : lastName;
     }
 
     private @Nullable UserEmail mapEmail(@Nullable String value) {
-        return value == null ? null : new UserEmail(value);
+        UserEmail email = new UserEmail(value);
+        return email.getValue() == null ? null : email;
     }
 }
