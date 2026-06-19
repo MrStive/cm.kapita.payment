@@ -72,7 +72,7 @@ repositories {
             isAllowInsecureProtocol = nexusMavenPublicUrl.startsWith("http://")
             credentials {
                 username = nexusUsername ?: "admin"
-                password = nexusPassword ?: "9d912f7d-c29a-4795-bd0a-b17481659304"
+                password = nexusPassword
             }
         }
     }
@@ -453,6 +453,7 @@ tasks.register<GenerateTask>("authentisUserEventOpenApiGenerate") {
 
 tasks.compileJava.get().dependsOn(
     tasks["mainOpenApiGenerate"],
+    tasks["monetbilOpenApiGenerate"],
     tasks["authentisUserEventOpenApiGenerate"],
 )
 

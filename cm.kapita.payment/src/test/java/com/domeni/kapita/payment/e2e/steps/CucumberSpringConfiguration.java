@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -17,12 +18,16 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class CucumberSpringConfiguration {
 
+    @MockitoBean
+    private com.domeni.kapita.generated.monetbil.api.MonetbilApi monetbilApi;
+
     @Container
     static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER =
             new PostgreSQLContainer<>("postgres:16-alpine")
                     .withDatabaseName("payment")
                     .withUsername("payment")
-                    .withPassword("payment");
+                    .withPassword("payment")
+                    .waitingFor(org.testcontainers.containers.wait.strategy.Wait.forListeningPort());
 
     @Container
     static final KafkaContainer KAFKA_CONTAINER =

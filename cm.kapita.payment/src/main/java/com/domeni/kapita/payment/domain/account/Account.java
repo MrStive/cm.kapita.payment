@@ -29,8 +29,12 @@ public class Account extends SoftDeleteJpaEntity<AccountId> {
     @Enumerated(EnumType.STRING)
     private AccountType type;
 
+    @Column(name = "c_owner_id")
+    private String ownerId;
+
     @Column(name = "c_balance")
-    private String balance;
+    @jakarta.persistence.Convert(converter = com.domeni.kapita.payment.jpa.converter.MonetaryAmountConverter.class)
+    private javax.money.MonetaryAmount balance;
 
     @Column(name = "c_number")
     private Long number;
@@ -39,9 +43,10 @@ public class Account extends SoftDeleteJpaEntity<AccountId> {
     private String provider;
 
     @Builder
-    public Account(AccountId id, AccountType type, String balance, Long number, String provider) {
+    public Account(AccountId id, AccountType type, String ownerId, javax.money.MonetaryAmount balance, Long number, String provider) {
         this.id = id != null ? id : new AccountId();
         this.type = type;
+        this.ownerId = ownerId;
         this.balance = balance;
         this.number = number;
         this.provider = provider;

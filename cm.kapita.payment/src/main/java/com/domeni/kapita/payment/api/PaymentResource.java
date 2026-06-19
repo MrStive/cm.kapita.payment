@@ -3,8 +3,9 @@ package com.domeni.kapita.payment.api;
 import com.domeni.kapita.generated.payment.api.PaymentApi;
 import com.domeni.kapita.generated.payment.dto.InitiatePaymentDTO;
 import com.domeni.kapita.generated.payment.dto.PaymentResponseDTO;
-import com.domeni.kapita.payment.service.DepositProcessor;
-import com.domeni.kapita.payment.service.MonetbilWebhookService;
+import com.domeni.kapita.payment.infrastructure.adapter.monetbil.MonetbilWebhookAdapter;
+import com.domeni.kapita.payment.service.PaymentService;
+import com.domeni.kapita.payment.service.mapper.PaymentMapper;
 import com.domeni.kapita.payment.service.model.CreateTransferRequest;
 import com.domeni.kapita.payment.service.model.CreatedTransferRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,42 +15,54 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 public class PaymentResource implements PaymentApi {
-    private final DepositProcessor depositProcessor;
-    private final MonetbilWebhookService monetbilWebhookService;
+    private final PaymentService paymentService;
+    private final MonetbilWebhookAdapter monetbilWebhookAdapter;
+    private final PaymentMapper paymentMapper;
     private final HttpServletRequest request;
 
     @Override
     public ResponseEntity<PaymentResponseDTO> initiatePayment(InitiatePaymentDTO dto) {
-        CreateTransferRequest request =
-                new CreateTransferRequest(
-                        UUID.randomUUID().toString(),
-                        String.valueOf(dto.getAmount()),
-                        dto.getCurrency(),
-                        dto.getPhoneNumber(),
-                        dto.getProvider().getValue(),
-                        "",
-                        dto.getDescription());
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(principal instanceof Jwt jwt)) {
+            throw new IllegalStateException("JWT authentication is required");
+        }
+        String userId = jwt.getSubject();
 
-        CreatedTransferRequest response = depositProcessor.process(request);
+        CreateTransferRequest transferRequest = paymentMapper.toRequest(dto);
+        transferRequest = new CreateTransferRequest(
+            transferRequest.idempotencyKey(),
+            transferRequest.amount(),
+            transferRequest.currency(),
+            transferRequest.phoneNumber(),
+            transferRequest.provider(),
+            transferRequest.returnUrl(),
+            userId,
+            transferRequest.description()
+        );
 
-        PaymentResponseDTO result = new PaymentResponseDTO();
-        result.setTransactionId(UUID.fromString(response.transactionId()));
-        result.setPaymentUrl(response.paymentUrl());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        CreatedTransferRequest response = paymentService.processDeposit(transferRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentMapper.toResponse(response));
     }
 
     @Override
-    public ResponseEntity<String> handleMonetbilWebhook(UUID providerTransactionId) {
+    public ResponseEntity<String> handleMonetbilWebhook(
+            UUID providerTransactionId,
+            String status,
+            String amount,
+            String currency,
+            String transactionId,
+            String sign) {
         Map<String, String> payload =
                 request.getParameterMap().entrySet().stream()
                         .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
-        monetbilWebhookService.handleNotification(providerTransactionId, payload);
+        monetbilWebhookAdapter.handle(providerTransactionId, payload);
         return ResponseEntity.ok("received");
     }
 }

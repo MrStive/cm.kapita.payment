@@ -44,15 +44,9 @@ class UserServiceTest {
 
         // Then
         then(userFactory).should().create(userCreationDataCaptor.capture());
-        assertThat(userCreationDataCaptor.getValue())
-                .isEqualTo(
-                        UserCreationData.builder()
-                                .id(userId)
-                                .name("john.doe")
-                                .firstname("John")
-                                .lastname("Doe")
-                                .email("john.doe@example.com")
-                                .build());
+        // Normalization now happens inside the domain objects created by the factory, 
+        // so the service passes the raw data.
+        assertThat(userCreationDataCaptor.getValue()).isEqualTo(input);
     }
 
     @Test
@@ -60,7 +54,7 @@ class UserServiceTest {
         // When / Then
         assertThatThrownBy(() -> userService.createUser(null))
                 .isInstanceOf(InvalidUserPayloadException.class)
-                .hasMessage("user creation payload is required");
+                .hasMessage("user creation payload is required and must be valid");
 
         verifyNoInteractions(userFactory);
     }
@@ -73,7 +67,7 @@ class UserServiceTest {
         // When / Then
         assertThatThrownBy(() -> userService.createUser(input))
                 .isInstanceOf(InvalidUserPayloadException.class)
-                .hasMessage("user creation payload is invalid");
+                .hasMessage("user creation payload is required and must be valid");
 
         verifyNoInteractions(userFactory);
     }
@@ -87,7 +81,7 @@ class UserServiceTest {
         // When / Then
         assertThatThrownBy(() -> userService.createUser(input))
                 .isInstanceOf(InvalidUserPayloadException.class)
-                .hasMessage("user creation payload is invalid");
+                .hasMessage("user creation payload is required and must be valid");
 
         verifyNoInteractions(userFactory);
     }

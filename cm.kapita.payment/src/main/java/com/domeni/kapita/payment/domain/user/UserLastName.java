@@ -7,12 +7,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.jspecify.annotations.Nullable;
+
 @Embeddable
 @EqualsAndHashCode
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 public class UserLastName {
-    private String value;
+    private @Nullable String value;
+
+    @SuppressWarnings("NullAway.Init")
+    public UserLastName(@Nullable String value) {
+        this.value = StringNormalizer.normalize(value);
+    }
 }

@@ -1,13 +1,10 @@
 package com.domeni.kapita.payment.service;
 
-import com.domeni.kapita.generated.payment.dto.CreateDemoDTO;
-import com.domeni.kapita.generated.payment.dto.DemoDTO;
 import com.domeni.kapita.payment.domain.demo.Demo;
 import com.domeni.kapita.payment.domain.demo.DemoData;
 import com.domeni.kapita.payment.domain.demo.DemoFactory;
 import com.domeni.kapita.payment.domain.demo.DemoFetcher;
 import com.domeni.kapita.payment.domain.exception.InvalidDemoPayloadException;
-import com.domeni.kapita.payment.service.mapper.DemoMapper;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -19,15 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class DemoService {
     private final DemoFactory demoFactory;
     private final DemoFetcher demoFetcher;
-    private final DemoMapper demoMapper;
 
     @Transactional
-    public UUID createDemo(CreateDemoDTO data) {
-        if (data == null) {
-            throw new InvalidDemoPayloadException("create demo payload is required");
-        }
-
-        DemoData mappedData = demoMapper.map(data);
+    public UUID createDemo(DemoData mappedData) {
         if (mappedData == null || mappedData.name() == null || mappedData.name().isBlank()) {
             throw new InvalidDemoPayloadException("create demo payload is invalid");
         }
@@ -48,12 +39,12 @@ public class DemoService {
     }
 
     @Transactional(readOnly = true)
-    public List<DemoDTO> fetchAllDemos() {
-        return demoFetcher.loadAllDemos().stream().map(demoMapper::map).toList();
+    public List<Demo> fetchAllDemos() {
+        return demoFetcher.loadAllDemos();
     }
 
     @Transactional(readOnly = true)
-    public DemoDTO getByDemoId(UUID demoId) {
-        return demoMapper.map(demoFetcher.getById(demoId));
+    public Demo getByDemoId(UUID demoId) {
+        return demoFetcher.getById(demoId);
     }
 }

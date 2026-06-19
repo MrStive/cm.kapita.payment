@@ -70,12 +70,29 @@ public class Transaction extends SoftDeleteJpaEntity<TransactionId> {
             String description) {
         this.id = id != null ? id : new TransactionId();
         this.idempotencyKey = idempotencyKey;
-        this.status = status;
+        this.status = status != null ? status : TransactionStatus.PENDING;
         this.type = type;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
         this.reason = reason;
         this.description = description;
+    }
+
+    public void complete() {
+        if (this.status == TransactionStatus.COMPLETED) {
+            return;
+        }
+        if (this.status == TransactionStatus.FAILED) {
+            throw new com.domeni.kapita.payment.domain.exception.IllegalTransactionStateException(this.id, this.status, "complete");
+        }
+        this.status = TransactionStatus.COMPLETED;
+    }
+
+    public void fail() {
+        if (this.status == TransactionStatus.COMPLETED) {
+            throw new com.domeni.kapita.payment.domain.exception.IllegalTransactionStateException(this.id, this.status, "fail");
+        }
+        this.status = TransactionStatus.FAILED;
     }
 }

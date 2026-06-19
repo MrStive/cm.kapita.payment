@@ -91,10 +91,33 @@ class UserFactoryImplTest {
     }
 
     @Test
-    void createWhenUserCreationDataIsNullShouldThrowNullPointerExceptionTest() {
-        // When / Then
-        assertThatThrownBy(() -> userFactory.create(null)).isInstanceOf(NullPointerException.class);
+    void createShouldNormalizeDataTest() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        UserCreationData input =
+                UserCreationData.builder()
+                        .id(userId)
+                        .name("  john.doe  ")
+                        .firstname("  John  ")
+                        .lastname(" ")
+                        .email(null)
+                        .build();
+        given(userRepository.findById(any(UserId.class))).willReturn(Optional.empty());
+        User persistedUser = new User();
+        given(userRepository.save(any(User.class))).willReturn(persistedUser);
 
-        verifyNoInteractions(userRepository);
+        // When
+        userFactory.create(input);
+
+        // Then
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        then(userRepository).should().save(userCaptor.capture());
+
+        User userToSave = userCaptor.getValue();
+        assertThat(userToSave.getName().getValue()).isEqualTo("john.doe");
+        assertThat(userToSave.getFirstname().getValue()).isEqualTo("John");
+        // Blank lastname should result in null object because of factory mapping logic
+        assertThat(userToSave.getLastname()).isNull();
+        assertThat(userToSave.getEmail()).isNull();
     }
 }
