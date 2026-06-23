@@ -16,7 +16,8 @@ public class UserService {
     @Transactional
     public void createUser(@Nullable UserCreationData data) {
         if (data == null || data.id() == null || data.name() == null || data.name().isBlank()) {
-            throw new InvalidUserPayloadException("user creation payload is required and must be valid");
+            throw new InvalidUserPayloadException(
+                    "user creation payload is required and must be valid");
         }
 
         userFactory.create(data);

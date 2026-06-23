@@ -163,6 +163,7 @@ dependencies {
     testAnnotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
     // Security
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("com.domeni.kapita:kapita-kafka-outbox-starter")
     implementation("org.javamoney:moneta:1.4.4")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")

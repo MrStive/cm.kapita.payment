@@ -190,18 +190,21 @@ components:
     InitiatePaymentDTO:
       type: "object"
       required:
-      - "amount"
-      - "currency"
+      - "externalReference"
+      - "purpose"
+      - "money"
       - "description"
       - "phoneNumber"
       - "provider"
       - "idempotencyKey"
       properties:
-        amount:
-          type: "number"
-          format: "decimal"
-        currency:
+        externalReference:
           type: "string"
+        purpose:
+          type: "string"
+          enum: ["SUBSCRIPTION_PAYMENT"]
+        money:
+          $ref: "#/components/schemas/MoneyDTO"
         description:
           type: "string"
         phoneNumber:
@@ -211,13 +214,32 @@ components:
           enum: ["MONETBIL"]
         idempotencyKey:
           type: "string"
+        returnUrl:
+          type: "string"
+    MoneyDTO:
+      type: "object"
+      required:
+      - "amount"
+      - "currency"
+      properties:
+        amount:
+          type: "number"
+          format: "decimal"
+        currency:
+          type: "string"
     PaymentResponseDTO:
       type: "object"
       required:
-      - "transactionId"
+      - "paymentId"
+      - "externalReference"
+      - "status"
       properties:
-        transactionId:
+        paymentId:
           type: "string"
           format: "uuid"
+        externalReference:
+          type: "string"
+        status:
+          type: "string"
         paymentUrl:
           type: "string"

@@ -44,7 +44,7 @@ class UserServiceTest {
 
         // Then
         then(userFactory).should().create(userCreationDataCaptor.capture());
-        // Normalization now happens inside the domain objects created by the factory, 
+        // Normalization now happens inside the domain objects created by the factory,
         // so the service passes the raw data.
         assertThat(userCreationDataCaptor.getValue()).isEqualTo(input);
     }

@@ -1,13 +1,9 @@
 package com.domeni.kapita.payment.domain.user;
 
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class StringNormalizer {
-    public static @Nullable String normalize(@Nullable String value) {
-        if (value == null) {
-            return null;
-        }
-        String trimmedValue = value.trim();
-        return trimmedValue.isEmpty() ? null : trimmedValue;
+    public static String normalize(@NonNull String value) {
+        return value.trim();
     }
 }

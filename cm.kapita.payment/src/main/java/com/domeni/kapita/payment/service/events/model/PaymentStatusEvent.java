@@ -1,3 +1,16 @@
 package com.domeni.kapita.payment.service.events.model;
 
-public record PaymentStatusEvent(String transactionId, String status, MoneyDTO amount) {}
+import java.time.Instant;
+
+public record PaymentStatusEvent(
+        String paymentId,
+        String externalReference,
+        String purpose,
+        String userId,
+        String status,
+        MoneyDTO money,
+        String provider,
+        String providerAttemptId,
+        String providerReference,
+        String failureReason,
+        Instant occurredAt) {}

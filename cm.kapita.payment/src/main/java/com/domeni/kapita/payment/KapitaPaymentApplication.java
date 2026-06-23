@@ -2,9 +2,10 @@ package com.domeni.kapita.payment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@org.springframework.scheduling.annotation.EnableScheduling
+@EnableScheduling
 public class KapitaPaymentApplication {
 
     public static void main(String[] args) {
