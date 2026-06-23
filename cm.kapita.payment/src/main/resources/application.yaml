@@ -26,6 +26,15 @@ spring:
   liquibase:
     change-log: "classpath:db/changelog/db.changelog-master.xml"
 kapita:
+  kafka:
+    outbox:
+      enabled: true
+      batch-size: "${KAPITA_OUTBOX_BATCH_SIZE:50}"
+      max-retries: "${KAPITA_OUTBOX_MAX_RETRIES:10}"
+      poll-interval-ms: "${KAPITA_OUTBOX_POLL_INTERVAL_MS:5000}"
+      retry-backoff-ms: "${KAPITA_OUTBOX_RETRY_BACKOFF_MS:5000}"
+      topic-mappings:
+        PAYMENT_STATUS_CHANGED: "${KAFKA_PAYMENT_STATUS_TOPIC:payment.status.updated}"
   messaging:
     user-created:
       topic: "${KAFKA_USER_CREATED_TOPIC:authentis.user.created}"

@@ -1,24 +1,17 @@
 package com.domeni.kapita.payment.domain.user;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import org.jspecify.annotations.Nullable;
 
 @Embeddable
 @EqualsAndHashCode
-@NoArgsConstructor
-@Builder
 @Getter
 public class UserFirstName {
-    private @Nullable String value;
+    private String value;
 
-    @SuppressWarnings("NullAway.Init")
-    public UserFirstName(@Nullable String value) {
-        this.value = StringNormalizer.normalize(value);
+    public UserFirstName(String value) {
+        this.value = Objects.requireNonNull(StringNormalizer.normalize(value));
     }
 }

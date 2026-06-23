@@ -1,15 +1,15 @@
 package com.domeni.kapita.payment.service.events.kafka;
 
-import com.domeni.kapita.payment.domain.outbox.OutboxEvent;
-import com.domeni.kapita.payment.domain.transaction.Transaction;
-import com.domeni.kapita.payment.repositories.OutboxEventRepository;
+import com.domeni.kapita.kafka.outbox.service.OutboxService;
+import com.domeni.kapita.payment.domain.payment.PaymentIntent;
+import com.domeni.kapita.payment.domain.provider_attempt.ProviderAttempt;
 import com.domeni.kapita.payment.service.events.model.MoneyDTO;
 import com.domeni.kapita.payment.service.events.model.PaymentStatusEvent;
 import com.domeni.kapita.payment.service.ports.PaymentStatusPublisher;
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,33 +17,38 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @SuppressWarnings({"all", "NullAway.Init"})
 public class PaymentStatusEventProducer implements PaymentStatusPublisher {
-    private final OutboxEventRepository outboxEventRepository;
+    private static final String PAYMENT_STATUS_CHANGED = "PAYMENT_STATUS_CHANGED";
+
+    private final OutboxService outboxService;
     private final ObjectMapper objectMapper;
 
     @Override
-    public void publish(Transaction transaction) {
+    public void publish(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {
         PaymentStatusEvent event =
                 new PaymentStatusEvent(
-                        transaction.getId().getValue(),
-                        transaction.getStatus().name(),
+                        paymentIntent.getId().getValue(),
+                        paymentIntent.getExternalReference(),
+                        paymentIntent.getPurpose().name(),
+                        paymentIntent.getUserId(),
+                        paymentIntent.getStatus().name(),
                         new MoneyDTO(
-                                transaction.getAmount().getNumber().numberValue(BigDecimal.class),
-                                transaction.getAmount().getCurrency().getCurrencyCode()));
+                                paymentIntent.getAmount().getNumber().numberValue(BigDecimal.class),
+                                paymentIntent.getAmount().getCurrency().getCurrencyCode()),
+                        paymentIntent.getProvider(),
+                        providerAttempt.getId().getValue(),
+                        providerAttempt.getProviderReference(),
+                        paymentIntent.getFailureReason(),
+                        Instant.now());
 
-        saveToOutbox(transaction.getId().getValue(), event);
+        saveToOutbox(paymentIntent.getId().getValue(), PAYMENT_STATUS_CHANGED, event);
     }
 
-    private void saveToOutbox(String aggregateId, Object payload) {
+    private void saveToOutbox(String aggregateId, String eventType, Object payload) {
         try {
             String jsonPayload = objectMapper.writeValueAsString(payload);
-            OutboxEvent outboxEvent = OutboxEvent.of(aggregateId, "PAYMENT_STATUS_CHANGED", jsonPayload);
-            outboxEventRepository.save(outboxEvent);
+            outboxService.enqueue(aggregateId, eventType, jsonPayload);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to serialize event payload", e);
         }
-    }
-
-    public void send(PaymentStatusEvent event) {
-        saveToOutbox(event.transactionId(), event);
     }
 }

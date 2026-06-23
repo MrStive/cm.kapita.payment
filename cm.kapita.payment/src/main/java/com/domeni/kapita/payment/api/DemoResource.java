@@ -28,7 +28,8 @@ public class DemoResource implements DemoApi {
 
     @Override
     public ResponseEntity<List<DemoDTO>> fetchAllDemo() {
-        return ResponseEntity.ok(demoService.fetchAllDemos().stream().map(demoMapper::map).toList());
+        return ResponseEntity.ok(
+                demoService.fetchAllDemos().stream().map(demoMapper::map).toList());
     }
 
     @Override

@@ -17,6 +17,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -41,33 +42,13 @@ public class PaymentDepositSteps {
     @Value("${app.monetbil.service-secret}")
     private String serviceSecret;
 
-    private String transactionId;
-    private String providerTransactionId;
+    private String paymentId;
+    private String providerAttemptId;
 
     @Given("I initiate a payment with following data")
     public void initiatePayment(DataTable dataTable) {
         Map<String, String> data = dataTable.asMaps().getFirst();
         String userId = "44a31cb2-bb38-4734-b8d8-9be15c7fb7b5";
-
-        // Pre-create account for user
-        jdbcClient.sql("INSERT INTO t_account (c_id, c_type, c_owner_id, c_balance, c_version, c_deleted) VALUES (?, ?, ?, ?, ?, ?)")
-                .param(UUID.randomUUID().toString())
-                .param("EXTERNAL")
-                .param(userId)
-                .param("XAF;10000")
-                .param(0)
-                .param(false)
-                .update();
-
-        // Pre-create Platform INTERNAL account
-        jdbcClient.sql("INSERT INTO t_account (c_id, c_type, c_owner_id, c_balance, c_version, c_deleted) VALUES (?, ?, ?, ?, ?, ?)")
-                .param(UUID.randomUUID().toString())
-                .param("INTERNAL")
-                .param("PLATFORM")
-                .param("XAF;0")
-                .param(0)
-                .param(false)
-                .update();
 
         // Mock Monetbil response
         WidgetPaymentResponseDto mockResponse = new WidgetPaymentResponseDto();
@@ -81,19 +62,22 @@ public class PaymentDepositSteps {
         var response =
                 RestAssured.given()
                         .port(port)
-                        .auth().oauth2(token)
+                        .auth()
+                        .oauth2(token)
                         .contentType(ContentType.JSON)
-                        .body(data)
+                        .body(paymentPayload(data))
                         .post("/payment");
 
         assertThat(response.statusCode()).isEqualTo(201);
-        this.transactionId = response.jsonPath().getString("transactionId");
-        
-        // Extract providerTransactionId from DB
-        this.providerTransactionId = jdbcClient.sql("SELECT c_id FROM t_provider_transaction WHERE c_transaction_id = ?")
-                .param(transactionId)
-                .query(String.class)
-                .single();
+        this.paymentId = response.jsonPath().getString("paymentId");
+
+        // Extract providerAttemptId from DB
+        this.providerAttemptId =
+                jdbcClient
+                        .sql("SELECT c_id FROM t_provider_attempt WHERE c_payment_intent_id = ?")
+                        .param(paymentId)
+                        .query(String.class)
+                        .single();
     }
 
     @When("I receive a success notification from Monetbil")
@@ -113,7 +97,7 @@ public class PaymentDepositSteps {
                 .port(port)
                 .contentType(ContentType.URLENC)
                 .formParams(payload)
-                .post("/monetbil/webhook/" + providerTransactionId);
+                .post("/monetbil/webhook/" + providerAttemptId);
     }
 
     private String md5Hex(String value) {
@@ -133,19 +117,41 @@ public class PaymentDepositSteps {
     @Then("the transaction status should be {string}")
     public void verifyTransactionStatus(String status) {
         await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    String transactionStatus =
-                            jdbcClient
-                                    .sql("SELECT c_status FROM t_transaction WHERE c_id = ?")
-                                    .param(transactionId)
-                                    .query(String.class)
-                                    .single();
-                    assertThat(transactionStatus).isEqualTo(status);
-                });
+                .untilAsserted(
+                        () -> {
+                            String paymentStatus =
+                                    jdbcClient
+                                            .sql(
+                                                    "SELECT c_status FROM t_payment_intent WHERE c_id = ?")
+                                            .param(paymentId)
+                                            .query(String.class)
+                                            .single();
+                            assertThat(paymentStatus).isEqualTo(status);
+                        });
     }
 
     @Then("a PaymentStatusEvent should be emitted to Kafka")
     public void verifyKafkaEvent() {
         // Implementation now handled via EventSteps.verifyPaymentStatusEvent("SUCCESS")
+    }
+
+    private Map<String, Object> paymentPayload(Map<String, String> data) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put(
+                "externalReference",
+                data.getOrDefault("externalReference", UUID.randomUUID().toString()));
+        payload.put("purpose", data.getOrDefault("purpose", "SUBSCRIPTION_PAYMENT"));
+        payload.put(
+                "money",
+                Map.of(
+                        "amount", data.get("amount"),
+                        "currency", data.get("currency")));
+        payload.put("phoneNumber", data.get("phoneNumber"));
+        payload.put("provider", data.get("provider"));
+        payload.put("idempotencyKey", data.get("idempotencyKey"));
+        payload.put("description", data.get("description"));
+        payload.put(
+                "returnUrl", data.getOrDefault("returnUrl", "https://kapita.test/payment-return"));
+        return payload;
     }
 }

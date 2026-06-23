@@ -1,4 +1,4 @@
-package com.domeni.kapita.payment.domain.transaction;
+package com.domeni.kapita.payment.domain.provider_attempt;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
@@ -12,10 +12,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TransactionId implements Serializable {
+public class ProviderAttemptId implements Serializable {
     private String value = UUID.randomUUID().toString();
 
-    public TransactionId(UUID value) {
+    public ProviderAttemptId(UUID value) {
         this.value = Objects.requireNonNull(value, "value").toString();
     }
 
@@ -26,8 +26,8 @@ public class TransactionId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TransactionId transactionId)) return false;
-        return Objects.equals(value, transactionId.value);
+        if (!(o instanceof ProviderAttemptId that)) return false;
+        return Objects.equals(value, that.value);
     }
 
     @Override

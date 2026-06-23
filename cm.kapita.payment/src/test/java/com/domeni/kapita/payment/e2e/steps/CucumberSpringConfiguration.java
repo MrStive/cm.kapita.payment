@@ -18,8 +18,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class CucumberSpringConfiguration {
 
-    @MockitoBean
-    private com.domeni.kapita.generated.monetbil.api.MonetbilApi monetbilApi;
+    @MockitoBean private com.domeni.kapita.generated.monetbil.api.MonetbilApi monetbilApi;
 
     @Container
     static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER =
@@ -27,7 +26,8 @@ public class CucumberSpringConfiguration {
                     .withDatabaseName("payment")
                     .withUsername("payment")
                     .withPassword("payment")
-                    .waitingFor(org.testcontainers.containers.wait.strategy.Wait.forListeningPort());
+                    .waitingFor(
+                            org.testcontainers.containers.wait.strategy.Wait.forListeningPort());
 
     @Container
     static final KafkaContainer KAFKA_CONTAINER =

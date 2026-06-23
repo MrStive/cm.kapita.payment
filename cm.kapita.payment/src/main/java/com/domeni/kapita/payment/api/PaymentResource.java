@@ -6,8 +6,8 @@ import com.domeni.kapita.generated.payment.dto.PaymentResponseDTO;
 import com.domeni.kapita.payment.infrastructure.adapter.monetbil.MonetbilWebhookAdapter;
 import com.domeni.kapita.payment.service.PaymentService;
 import com.domeni.kapita.payment.service.mapper.PaymentMapper;
-import com.domeni.kapita.payment.service.model.CreateTransferRequest;
-import com.domeni.kapita.payment.service.model.CreatedTransferRequest;
+import com.domeni.kapita.payment.service.model.CreatePaymentRequest;
+import com.domeni.kapita.payment.service.model.CreatedPayment;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.UUID;
@@ -35,25 +35,15 @@ public class PaymentResource implements PaymentApi {
         }
         String userId = jwt.getSubject();
 
-        CreateTransferRequest transferRequest = paymentMapper.toRequest(dto);
-        transferRequest = new CreateTransferRequest(
-            transferRequest.idempotencyKey(),
-            transferRequest.amount(),
-            transferRequest.currency(),
-            transferRequest.phoneNumber(),
-            transferRequest.provider(),
-            transferRequest.returnUrl(),
-            userId,
-            transferRequest.description()
-        );
+        CreatePaymentRequest paymentRequest = paymentMapper.toRequest(dto, userId);
 
-        CreatedTransferRequest response = paymentService.processDeposit(transferRequest);
+        CreatedPayment response = paymentService.initiatePayment(paymentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentMapper.toResponse(response));
     }
 
     @Override
     public ResponseEntity<String> handleMonetbilWebhook(
-            UUID providerTransactionId,
+            UUID providerAttemptId,
             String status,
             String amount,
             String currency,
@@ -62,7 +52,7 @@ public class PaymentResource implements PaymentApi {
         Map<String, String> payload =
                 request.getParameterMap().entrySet().stream()
                         .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
-        monetbilWebhookAdapter.handle(providerTransactionId, payload);
+        monetbilWebhookAdapter.handle(providerAttemptId, payload);
         return ResponseEntity.ok("received");
     }
 }

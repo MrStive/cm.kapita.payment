@@ -52,7 +52,6 @@ public class EventSteps {
         assertThat(event.status()).isEqualTo(status);
     }
 
-
     private UserCreatedEventEnvelopeDTO createEnvelope(String eventType, Map<String, String> map) {
         if (!DomainEventType.USER_CREATED.name().equals(eventType)) {
             throw new IllegalArgumentException("Unsupported event type for e2e test");

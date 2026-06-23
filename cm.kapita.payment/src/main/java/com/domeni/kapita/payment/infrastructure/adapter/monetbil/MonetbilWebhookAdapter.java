@@ -1,7 +1,8 @@
 package com.domeni.kapita.payment.infrastructure.adapter.monetbil;
 
-import com.domeni.kapita.payment.service.PaymentService;
+import com.domeni.kapita.payment.service.PaymentNotificationService;
 import com.domeni.kapita.payment.service.model.PaymentNotification;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,23 +19,31 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @SuppressWarnings({"all", "NullAway.Init"})
 public class MonetbilWebhookAdapter {
-    private final PaymentService paymentService;
+    private final PaymentNotificationService paymentNotificationService;
 
     @Value("${app.monetbil.service-secret}")
     private String serviceSecret;
 
-    public void handle(UUID providerTransactionId, Map<String, String> payload) {
+    public void handle(UUID providerAttemptId, Map<String, String> payload) {
         verifySignature(payload);
 
-        PaymentNotification notification = new PaymentNotification(
-            providerTransactionId,
-            payload.get("status"),
-            payload.get("transaction_id"),
-            payload.get("amount"),
-            payload.get("currency")
-        );
+        PaymentNotification notification =
+                new PaymentNotification(
+                        providerAttemptId,
+                        payload.get("status"),
+                        payload.get("transaction_id"),
+                        parseAmount(payload.get("amount")),
+                        payload.get("currency"),
+                        payload);
 
-        paymentService.handlePaymentNotification(notification);
+        paymentNotificationService.handle(notification);
+    }
+
+    private BigDecimal parseAmount(String rawAmount) {
+        if (rawAmount == null || rawAmount.isBlank()) {
+            return null;
+        }
+        return new BigDecimal(rawAmount);
     }
 
     private void verifySignature(Map<String, String> payload) {

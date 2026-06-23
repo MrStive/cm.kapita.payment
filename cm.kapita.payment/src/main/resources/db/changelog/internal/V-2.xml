@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="payment-5:1" author="domeni.ngameni">
+        <createTable tableName="t_payment_intent">
+            <column name="c_id" type="varchar(36)">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_t_payment_intent" />
+            </column>
+            <column name="c_idempotency_key" type="varchar(255)">
+                <constraints nullable="false" unique="true"
+                             uniqueConstraintName="uk_payment_intent_idempotency_key" />
+            </column>
+            <column name="c_request_hash" type="varchar(64)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_external_reference" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_purpose" type="varchar(64)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_user_id" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_amount" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_provider" type="varchar(64)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_status" type="varchar(32)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_description" type="varchar(255)" />
+            <column name="c_paid_at" type="timestamp" />
+            <column name="c_failed_at" type="timestamp" />
+            <column name="c_failure_reason" type="varchar(1000)" />
+            <column name="c_version" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createIndex tableName="t_payment_intent" indexName="idx_payment_intent_external_reference">
+            <column name="c_external_reference" />
+        </createIndex>
+        <createIndex tableName="t_payment_intent" indexName="idx_payment_intent_status">
+            <column name="c_status" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="payment-5:2" author="domeni.ngameni">
+        <createTable tableName="t_provider_attempt">
+            <column name="c_id" type="varchar(36)">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_t_provider_attempt" />
+            </column>
+            <column name="c_payment_intent_id" type="varchar(36)">
+                <constraints nullable="false" unique="true"
+                             uniqueConstraintName="uk_provider_attempt_payment_intent" />
+            </column>
+            <column name="c_provider" type="varchar(64)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_provider_reference" type="varchar(255)" />
+            <column name="c_payment_url" type="text" />
+            <column name="c_status" type="varchar(32)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_raw_response" type="text" />
+            <column name="c_raw_webhook" type="text" />
+            <column name="c_failure_reason" type="varchar(1000)" />
+            <column name="c_completed_at" type="timestamp" />
+            <column name="c_version" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="c_deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="t_provider_attempt"
+                baseColumnNames="c_payment_intent_id"
+                constraintName="fk_provider_attempt_payment_intent"
+                referencedTableName="t_payment_intent"
+                referencedColumnNames="c_id" />
+        <createIndex tableName="t_provider_attempt" indexName="idx_provider_attempt_payment_intent">
+            <column name="c_payment_intent_id" />
+        </createIndex>
+        <createIndex tableName="t_provider_attempt" indexName="idx_provider_attempt_provider_reference">
+            <column name="c_provider_reference" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
