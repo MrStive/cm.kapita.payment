@@ -47,7 +47,6 @@ public class PaymentResource implements PaymentApi {
             String status,
             String amount,
             String currency,
-            String transactionId,
             String sign) {
         Map<String, String> payload =
                 request.getParameterMap().entrySet().stream()

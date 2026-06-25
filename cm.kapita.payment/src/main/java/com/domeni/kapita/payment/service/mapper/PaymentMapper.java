@@ -12,6 +12,7 @@ import com.domeni.kapita.payment.service.model.Money;
 import com.domeni.kapita.payment.service.ports.PaymentInitiationRequest;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+import org.jspecify.annotations.Nullable;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -35,7 +36,7 @@ public interface PaymentMapper {
     @Mapping(target = "externalReference", source = "paymentIntent.externalReference")
     @Mapping(target = "status", expression = "java(paymentIntent.getStatus().name())")
     @Mapping(target = "paymentUrl", source = "paymentUrl")
-    CreatedPayment toCreatedPayment(PaymentIntent paymentIntent, String paymentUrl);
+    CreatedPayment toCreatedPayment(PaymentIntent paymentIntent, @Nullable String paymentUrl);
 
     @Mapping(target = "paymentIntentId", source = "paymentIntent.id")
     @Mapping(target = "providerAttemptId", source = "providerAttempt.id")

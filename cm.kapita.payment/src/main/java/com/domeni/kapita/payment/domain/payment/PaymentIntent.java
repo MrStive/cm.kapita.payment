@@ -14,14 +14,13 @@ import java.util.Objects;
 import javax.money.MonetaryAmount;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_payment_intent")
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class PaymentIntent extends SoftDeleteJpaEntity<PaymentIntentId> {
 
     @EmbeddedId
@@ -64,6 +63,7 @@ public class PaymentIntent extends SoftDeleteJpaEntity<PaymentIntentId> {
     @Column(name = "c_failed_at")
     private Instant failedAt;
 
+    @Nullable
     @Column(name = "c_failure_reason")
     private String failureReason;
 
@@ -179,5 +179,10 @@ public class PaymentIntent extends SoftDeleteJpaEntity<PaymentIntentId> {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(name + " is required");
         }
+    }
+
+    @Override
+    public void setId(PaymentIntentId paymentIntentId) {
+        this.id = paymentIntentId;
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class PaymentService {
     private final PaymentPersistenceService paymentPersistenceService;
     private final PaymentGateway paymentGateway;
