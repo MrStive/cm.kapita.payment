@@ -15,13 +15,14 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_provider_attempt")
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class ProviderAttempt extends SoftDeleteJpaEntity<ProviderAttemptId> {
 
     @EmbeddedId
@@ -48,9 +49,11 @@ public class ProviderAttempt extends SoftDeleteJpaEntity<ProviderAttemptId> {
     @Column(name = "c_raw_response")
     private String rawResponse;
 
+    @Nullable
     @Column(name = "c_raw_webhook")
     private String rawWebhook;
 
+    @Nullable
     @Column(name = "c_failure_reason")
     private String failureReason;
 
@@ -88,7 +91,7 @@ public class ProviderAttempt extends SoftDeleteJpaEntity<ProviderAttemptId> {
         this.status = ProviderAttemptStatus.PENDING;
     }
 
-    public void markSucceeded(String providerReference, String rawWebhook) {
+    public void markSucceeded(@Nullable String providerReference, @Nullable String rawWebhook) {
         if (status == ProviderAttemptStatus.SUCCEEDED) {
             return;
         }
@@ -102,7 +105,7 @@ public class ProviderAttempt extends SoftDeleteJpaEntity<ProviderAttemptId> {
         this.failureReason = null;
     }
 
-    public void markFailed(String reason, String rawPayload) {
+    public void markFailed(String reason, @Nullable String rawPayload) {
         if (status == ProviderAttemptStatus.FAILED) {
             return;
         }
@@ -113,7 +116,7 @@ public class ProviderAttempt extends SoftDeleteJpaEntity<ProviderAttemptId> {
         this.completedAt = Instant.now();
     }
 
-    public void markCancelled(String reason, String rawPayload) {
+    public void markCancelled(String reason, @Nullable String rawPayload) {
         if (status == ProviderAttemptStatus.CANCELLED) {
             return;
         }
@@ -124,7 +127,7 @@ public class ProviderAttempt extends SoftDeleteJpaEntity<ProviderAttemptId> {
         this.completedAt = Instant.now();
     }
 
-    public void markExpired(String reason, String rawPayload) {
+    public void markExpired(String reason, @Nullable String rawPayload) {
         if (status == ProviderAttemptStatus.EXPIRED) {
             return;
         }

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class PaymentPersistenceService {
     private final PaymentIntentRepository paymentIntentRepository;
     private final ProviderAttemptRepository providerAttemptRepository;
@@ -44,15 +44,15 @@ public class PaymentPersistenceService {
             String rawResponse) {
         providerAttempt.markPending(providerReference, paymentUrl, rawResponse);
         paymentIntent.markPaymentPending();
-        providerAttemptRepository.save(providerAttempt);
-        paymentIntentRepository.save(paymentIntent);
+        providerAttemptRepository.saveAndFlush(providerAttempt);
+        paymentIntentRepository.saveAndFlush(paymentIntent);
         return new LocalPayment(paymentIntent, providerAttempt);
     }
 
     @Transactional
     public void markInitiationFailed(
             PaymentIntent paymentIntent, ProviderAttempt providerAttempt, String reason) {
-        providerAttempt.markFailed(reason, null);
+        providerAttempt.markFailed(reason, null); // rawPayload not available at initiation failure
         paymentIntent.markFailed(reason);
         providerAttemptRepository.save(providerAttempt);
         paymentIntentRepository.save(paymentIntent);

@@ -9,13 +9,14 @@ import com.domeni.kapita.payment.service.ports.PaymentInitiationRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@SuppressWarnings("NullAway")
+@SuppressWarnings("NullAway.Init")
 public class MonetbilGateway implements PaymentGateway {
     private final MonetbilApi monetbilApi;
     private final ObjectMapper objectMapper;
@@ -44,7 +45,9 @@ public class MonetbilGateway implements PaymentGateway {
         }
 
         return new PaymentGatewayResult(
-                response.getPaymentId(), response.getPaymentUrl(), serialize(response));
+                Objects.requireNonNull(response.getPaymentId(), "paymentId is required"),
+                Objects.requireNonNull(response.getPaymentUrl(), "paymentUrl is required"),
+                serialize(response));
     }
 
     private String serialize(WidgetPaymentResponseDto response) {

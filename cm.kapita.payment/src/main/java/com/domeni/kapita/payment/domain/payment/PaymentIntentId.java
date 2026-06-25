@@ -6,11 +6,9 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Embeddable
 @Getter
-@Setter
 @NoArgsConstructor
 public class PaymentIntentId implements Serializable {
     private String value = UUID.randomUUID().toString();

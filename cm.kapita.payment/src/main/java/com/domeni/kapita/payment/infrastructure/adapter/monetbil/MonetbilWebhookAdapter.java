@@ -12,12 +12,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class MonetbilWebhookAdapter {
     private final PaymentNotificationService paymentNotificationService;
 
@@ -39,7 +40,7 @@ public class MonetbilWebhookAdapter {
         paymentNotificationService.handle(notification);
     }
 
-    private BigDecimal parseAmount(String rawAmount) {
+    private @Nullable BigDecimal parseAmount(@Nullable String rawAmount) {
         if (rawAmount == null || rawAmount.isBlank()) {
             return null;
         }

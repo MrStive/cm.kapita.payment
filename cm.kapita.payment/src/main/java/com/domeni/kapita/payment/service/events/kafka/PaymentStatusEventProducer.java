@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class PaymentStatusEventProducer implements PaymentStatusPublisher {
     private static final String PAYMENT_STATUS_CHANGED = "PAYMENT_STATUS_CHANGED";
 

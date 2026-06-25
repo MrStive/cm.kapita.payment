@@ -1,6 +1,7 @@
 package com.domeni.kapita.payment.service.events.model;
 
 import java.time.Instant;
+import org.jspecify.annotations.Nullable;
 
 public record PaymentStatusEvent(
         String paymentId,
@@ -12,5 +13,5 @@ public record PaymentStatusEvent(
         String provider,
         String providerAttemptId,
         String providerReference,
-        String failureReason,
+        @Nullable String failureReason,
         Instant occurredAt) {}

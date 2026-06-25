@@ -12,12 +12,13 @@ import com.domeni.kapita.payment.service.ports.PaymentStatusPublisher;
 import java.math.BigDecimal;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings({"all", "NullAway.Init"})
+@SuppressWarnings("NullAway.Init")
 public class PaymentNotificationService {
     private final PaymentIntentRepository paymentIntentRepository;
     private final ProviderAttemptRepository providerAttemptRepository;
@@ -64,8 +65,12 @@ public class PaymentNotificationService {
             PaymentNotification notification,
             PaymentIntent paymentIntent,
             ProviderAttempt providerAttempt,
-            String rawPayload) {
-        String status = normalizeStatus(notification.status());
+            @Nullable String rawPayload) {
+        String rawStatus = notification.status();
+        if (rawStatus == null) {
+            throw new IllegalArgumentException("Missing provider payment status");
+        }
+        String status = normalizeStatus(rawStatus);
         return switch (status) {
             case "success" -> {
                 providerAttempt.markSucceeded(notification.externalId(), rawPayload);
@@ -124,7 +129,7 @@ public class PaymentNotificationService {
         return status.trim().toLowerCase();
     }
 
-    private String formatPayload(Map<String, String> rawPayload) {
+    private @Nullable String formatPayload(@Nullable Map<String, String> rawPayload) {
         return rawPayload == null ? null : rawPayload.toString();
     }
 }
