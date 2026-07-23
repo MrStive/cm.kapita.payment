@@ -9,6 +9,9 @@ import lombok.NonNull;
 public class UserEmail {
     private String value;
 
+    @SuppressWarnings("NullAway.Init")
+    protected UserEmail() {}
+
     public UserEmail(@NonNull String value) {
         this.value = StringNormalizer.normalize(value);
     }

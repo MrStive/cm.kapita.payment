@@ -43,11 +43,7 @@ public class PaymentResource implements PaymentApi {
 
     @Override
     public ResponseEntity<String> handleMonetbilWebhook(
-            UUID providerAttemptId,
-            String status,
-            String amount,
-            String currency,
-            String sign) {
+            UUID providerAttemptId, String status, String amount, String currency, String sign) {
         Map<String, String> payload =
                 request.getParameterMap().entrySet().stream()
                         .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));

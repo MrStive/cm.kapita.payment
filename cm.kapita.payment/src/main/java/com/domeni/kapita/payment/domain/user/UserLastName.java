@@ -10,6 +10,10 @@ import lombok.Getter;
 public class UserLastName {
     private String value;
 
+    @SuppressWarnings("NullAway.Init")
+    protected UserLastName() {
+    }
+
     public UserLastName(String value) {
         this.value = StringNormalizer.normalize(value);
     }

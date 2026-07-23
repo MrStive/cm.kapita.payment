@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:17
     environment:
-      POSTGRES_DB: payment-db
+      POSTGRES_DB: payment_db
       POSTGRES_USER: payment
       POSTGRES_PASSWORD: change-me
     ports:
@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U payment -d payment-db"]z
+      test: ["CMD-SHELL", "pg_isready -U payment -d payment_db"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -24,7 +24,7 @@ services:
       SPRING_PROFILES_ACTIVE: e2e
       DB_HOST: db
       DB_PORT: "5432"
-      DB_NAME: payment-db
+      DB_NAME: payment_db
       DB_USER: payment
       DB_PASSWORD: change-me
       ISSUER_URI: http://auth-service.local
