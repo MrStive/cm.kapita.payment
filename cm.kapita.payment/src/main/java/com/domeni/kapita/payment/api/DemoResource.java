@@ -16,24 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class DemoResource implements DemoApi {
-    private final DemoService demoService;
-    private final DemoMapper demoMapper;
+  private final DemoService demoService;
+  private final DemoMapper demoMapper;
 
-    @Override
-    public ResponseEntity<CreationResponseDTO> createDemo(CreateDemoDTO createDemoDTO) {
-        UUID createdDemoId = demoService.createDemo(demoMapper.map(createDemoDTO));
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreationResponseDTO().newId(createdDemoId));
-    }
+  @Override
+  public ResponseEntity<CreationResponseDTO> createDemo(CreateDemoDTO createDemoDTO) {
+    UUID createdDemoId = demoService.createDemo(demoMapper.map(createDemoDTO));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new CreationResponseDTO().newId(createdDemoId));
+  }
 
-    @Override
-    public ResponseEntity<List<DemoDTO>> fetchAllDemo() {
-        return ResponseEntity.ok(
-                demoService.fetchAllDemos().stream().map(demoMapper::map).toList());
-    }
+  @Override
+  public ResponseEntity<List<DemoDTO>> fetchAllDemo() {
+    return ResponseEntity.ok(demoService.fetchAllDemos().stream().map(demoMapper::map).toList());
+  }
 
-    @Override
-    public ResponseEntity<DemoDTO> fetchDemoById(UUID demoId) {
-        return ResponseEntity.ok(demoMapper.map(demoService.getByDemoId(demoId)));
-    }
+  @Override
+  public ResponseEntity<DemoDTO> fetchDemoById(UUID demoId) {
+    return ResponseEntity.ok(demoMapper.map(demoService.getByDemoId(demoId)));
+  }
 }

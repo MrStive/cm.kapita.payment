@@ -23,53 +23,53 @@ import org.jspecify.annotations.Nullable;
 @Table(name = "t_user")
 public class User extends SoftDeleteJpaEntity<UserId> {
 
-    @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "c_id"))
-    private UserId id = new UserId();
+  @EmbeddedId
+  @AttributeOverride(name = "value", column = @Column(name = "c_id"))
+  private UserId id = new UserId();
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "c_name"))
-    private @Nullable UserName name;
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "c_name"))
+  private @Nullable UserName name;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "c_firstname"))
-    private @Nullable UserFirstName firstname;
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "c_firstname"))
+  private @Nullable UserFirstName firstname;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "c_lastname"))
-    private @Nullable UserLastName lastname;
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "c_lastname"))
+  private @Nullable UserLastName lastname;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "c_email"))
-    private @Nullable UserEmail email;
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "c_email"))
+  private @Nullable UserEmail email;
 
-    @Builder
-    public User(
-            UserId id,
-            @Nullable UserName name,
-            @Nullable UserFirstName firstname,
-            @Nullable UserLastName lastname,
-            @Nullable UserEmail email) {
-        this.id = id != null ? id : new UserId();
-        this.name = name;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
+  @Builder
+  public User(
+      UserId id,
+      @Nullable UserName name,
+      @Nullable UserFirstName firstname,
+      @Nullable UserLastName lastname,
+      @Nullable UserEmail email) {
+    this.id = id != null ? id : new UserId();
+    this.name = name;
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.email = email;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof User user)) {
-            return false;
-        }
-        return Objects.equals(id, user.id);
+    if (!(o instanceof User user)) {
+      return false;
     }
+    return Objects.equals(id, user.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
 }

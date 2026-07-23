@@ -11,15 +11,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    private final UserSpringRepository userSpringRepository;
+  private final UserSpringRepository userSpringRepository;
 
-    @Override
-    public User save(User value) {
-        return userSpringRepository.save(value);
-    }
+  @Override
+  public User save(User value) {
+    return userSpringRepository.save(value);
+  }
 
-    @Override
-    public Optional<User> findById(UserId id) {
-        return userSpringRepository.findById(id);
-    }
+  @Override
+  public Optional<User> findById(UserId id) {
+    return userSpringRepository.findById(id);
+  }
 }

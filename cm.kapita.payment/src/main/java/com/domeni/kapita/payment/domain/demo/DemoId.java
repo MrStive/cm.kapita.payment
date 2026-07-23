@@ -13,25 +13,25 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DemoId implements Serializable {
-    private String value = UUID.randomUUID().toString();
+  private String value = UUID.randomUUID().toString();
 
-    public DemoId(String value) {
-        this.value = value;
-    }
+  public DemoId(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof DemoId demoId)) {
-            return false;
-        }
-        return Objects.equals(value, demoId.value);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (!(o instanceof DemoId demoId)) {
+      return false;
+    }
+    return Objects.equals(value, demoId.value);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(value);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(value);
+  }
 }

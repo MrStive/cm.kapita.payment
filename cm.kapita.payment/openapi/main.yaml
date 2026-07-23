@@ -102,7 +102,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PaymentResponseDTO"
-  /monetbil/webhook/{providerTransactionId}:
+  /monetbil/webhook/{providerAttemptId}:
     post:
       tags:
       - "Payment"
@@ -110,7 +110,7 @@ paths:
       description: "Receives server-to-server notifications from Monetbil"
       operationId: "handleMonetbilWebhook"
       parameters:
-      - name: "providerTransactionId"
+      - name: "providerAttemptId"
         in: "path"
         required: true
         schema:

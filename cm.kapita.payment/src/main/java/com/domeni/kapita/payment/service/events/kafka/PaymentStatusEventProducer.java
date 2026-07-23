@@ -17,38 +17,38 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @SuppressWarnings("NullAway.Init")
 public class PaymentStatusEventProducer implements PaymentStatusPublisher {
-    private static final String PAYMENT_STATUS_CHANGED = "PAYMENT_STATUS_CHANGED";
+  private static final String PAYMENT_STATUS_CHANGED = "PAYMENT_STATUS_CHANGED";
 
-    private final OutboxService outboxService;
-    private final ObjectMapper objectMapper;
+  private final OutboxService outboxService;
+  private final ObjectMapper objectMapper;
 
-    @Override
-    public void publish(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {
-        PaymentStatusEvent event =
-                new PaymentStatusEvent(
-                        paymentIntent.getId().getValue(),
-                        paymentIntent.getExternalReference(),
-                        paymentIntent.getPurpose().name(),
-                        paymentIntent.getUserId(),
-                        paymentIntent.getStatus().name(),
-                        new MoneyDTO(
-                                paymentIntent.getAmount().getNumber().numberValue(BigDecimal.class),
-                                paymentIntent.getAmount().getCurrency().getCurrencyCode()),
-                        paymentIntent.getProvider(),
-                        providerAttempt.getId().getValue(),
-                        providerAttempt.getProviderReference(),
-                        paymentIntent.getFailureReason(),
-                        Instant.now());
+  @Override
+  public void publish(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {
+    PaymentStatusEvent event =
+        new PaymentStatusEvent(
+            paymentIntent.getId().getValue(),
+            paymentIntent.getExternalReference(),
+            paymentIntent.getPurpose().name(),
+            paymentIntent.getUserId(),
+            paymentIntent.getStatus().name(),
+            new MoneyDTO(
+                paymentIntent.getAmount().getNumber().numberValue(BigDecimal.class),
+                paymentIntent.getAmount().getCurrency().getCurrencyCode()),
+            paymentIntent.getProvider(),
+            providerAttempt.getId().getValue(),
+            providerAttempt.getProviderReference(),
+            paymentIntent.getFailureReason(),
+            Instant.now());
 
-        saveToOutbox(paymentIntent.getId().getValue(), PAYMENT_STATUS_CHANGED, event);
+    saveToOutbox(paymentIntent.getId().getValue(), PAYMENT_STATUS_CHANGED, event);
+  }
+
+  private void saveToOutbox(String aggregateId, String eventType, Object payload) {
+    try {
+      String jsonPayload = objectMapper.writeValueAsString(payload);
+      outboxService.enqueue(aggregateId, eventType, jsonPayload);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to serialize event payload", e);
     }
-
-    private void saveToOutbox(String aggregateId, String eventType, Object payload) {
-        try {
-            String jsonPayload = objectMapper.writeValueAsString(payload);
-            outboxService.enqueue(aggregateId, eventType, jsonPayload);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize event payload", e);
-        }
-    }
+  }
 }

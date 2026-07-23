@@ -11,15 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserFactory userFactory;
+  private final UserFactory userFactory;
 
-    @Transactional
-    public void createUser(@Nullable UserCreationData data) {
-        if (data == null || data.id() == null || data.name() == null || data.name().isBlank()) {
-            throw new InvalidUserPayloadException(
-                    "user creation payload is required and must be valid");
-        }
-
-        userFactory.create(data);
+  @Transactional
+  public void createUser(@Nullable UserCreationData data) {
+    if (data == null || data.id() == null || data.name() == null || data.name().isBlank()) {
+      throw new InvalidUserPayloadException("user creation payload is required and must be valid");
     }
+
+    userFactory.create(data);
+  }
 }

@@ -1,148 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-        <changeSet id="payment-1:1" author="domeni.ngameni">
-                <createTable tableName="t_demo">
-                        <column name="c_id" type="varchar(36)">
-                                <constraints nullable="false" primaryKey="true"
-                                        primaryKeyName="pk_t_demo" />
-                        </column>
-                        <column name="c_name" type="varchar(255)" />
-                        <column name="c_version" type="bigint" defaultValueNumeric="0">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_deleted" type="boolean"
-                                defaultValueBoolean="false">
-                                <constraints nullable="false" />
-                        </column>
-                </createTable>
-        </changeSet>
-        <changeSet id="payment-2:1" author="domeni.ngameni">
-                <createTable tableName="t_user">
-                        <column name="c_id" type="varchar(36)">
-                                <constraints nullable="false" primaryKey="true"
-                                             primaryKeyName="pk_t_user" />
-                        </column>
-                        <column name="c_name" type="varchar(255)" />
-                        <column name="c_firstname" type="varchar(255)" />
-                        <column name="c_lastname" type="varchar(255)" />
-                        <column name="c_email" type="varchar(255)" />
-                        <column name="c_version" type="bigint" defaultValueNumeric="0">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_deleted" type="boolean"
-                                defaultValueBoolean="false">
-                                <constraints nullable="false" />
-                        </column>
-                </createTable>
-        </changeSet>
+	<changeSet id="payment-1:1" author="domeni.ngameni">
+		<createTable tableName="t_demo">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_t_demo" />
+			</column>
+			<column name="c_name" type="varchar(255)" />
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="payment-2:1" author="domeni.ngameni">
+		<createTable tableName="t_user">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_t_user" />
+			</column>
+			<column name="c_name" type="varchar(255)" />
+			<column name="c_firstname" type="varchar(255)" />
+			<column name="c_lastname" type="varchar(255)" />
+			<column name="c_email" type="varchar(255)" />
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
-        <changeSet id="payment-2:2" author="domeni.ngameni">
-                <createTable tableName="t_inbox_event">
-                        <column name="c_id" type="varchar(36)">
-                                <constraints nullable="false" primaryKey="true"
-                                             primaryKeyName="pk_inbox_event" />
-                        </column>
-                        <column name="c_type" type="varchar(100)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_status" type="varchar(32)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_created_at" type="timestamp">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_processed_at" type="timestamp" />
-                </createTable>
-        </changeSet>
+	<changeSet id="payment-2:2" author="domeni.ngameni">
+		<createTable tableName="t_inbox_event">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_inbox_event" />
+			</column>
+			<column name="c_type" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_status" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_created_at" type="timestamp">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_processed_at" type="timestamp" />
+		</createTable>
+	</changeSet>
 
-        <changeSet id="payment-3:1" author="domeni.ngameni">
-                <createTable tableName="t_account">
-                        <column name="c_id" type="varchar(36)">
-                                <constraints nullable="false" primaryKey="true"
-                                             primaryKeyName="pk_t_account" />
-                        </column>
-                        <column name="c_type" type="varchar(32)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_owner_id" type="varchar(36)" />
-                        <column name="c_balance" type="varchar(255)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_number" type="bigint" />
-                        <column name="c_provider" type="varchar(50)" />
-                        <column name="c_version" type="bigint" defaultValueNumeric="0">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_deleted" type="boolean" defaultValueBoolean="false">
-                                <constraints nullable="false" />
-                        </column>
-                </createTable>
-        </changeSet>
+	<changeSet id="payment-3:1" author="domeni.ngameni">
+		<createTable tableName="t_account">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_t_account" />
+			</column>
+			<column name="c_type" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_owner_id" type="varchar(36)" />
+			<column name="c_balance" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_number" type="bigint" />
+			<column name="c_provider" type="varchar(50)" />
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
-        <changeSet id="payment-3:2" author="domeni.ngameni">
-                <createTable tableName="t_transaction">
-                        <column name="c_id" type="varchar(36)">
-                                <constraints nullable="false" primaryKey="true"
-                                             primaryKeyName="pk_t_transaction" />
-                        </column>
-                        <column name="c_idempotency_key" type="varchar(255)">
-                                <constraints nullable="false" unique="true" />
-                        </column>
-                        <column name="c_status" type="varchar(32)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_type" type="varchar(32)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_from_account_id" type="varchar(36)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_to_account_id" type="varchar(36)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_amount" type="varchar(255)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_reason" type="text" />
-                        <column name="c_description" type="varchar(255)" />
-                        <column name="c_version" type="bigint" defaultValueNumeric="0">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_deleted" type="boolean" defaultValueBoolean="false">
-                                <constraints nullable="false" />
-                        </column>
-                </createTable>
-        </changeSet>
+	<changeSet id="payment-3:2" author="domeni.ngameni">
+		<createTable tableName="t_transaction">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_t_transaction" />
+			</column>
+			<column name="c_idempotency_key" type="varchar(255)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="c_status" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_type" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_from_account_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_to_account_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_amount" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_reason" type="text" />
+			<column name="c_description" type="varchar(255)" />
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
-        <changeSet id="payment-3:3" author="domeni.ngameni">
-                <createTable tableName="t_provider_transaction">
-                        <column name="c_id" type="varchar(36)">
-                                <constraints nullable="false" primaryKey="true"
-                                             primaryKeyName="pk_t_provider_transaction" />
-                        </column>
-                        <column name="c_transaction_id" type="varchar(36)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_provider" type="varchar(50)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_external_id" type="varchar(255)" />
-                        <column name="c_payment_url" type="text" />
-                        <column name="c_phone" type="varchar(50)" />
-                        <column name="c_status" type="varchar(32)">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_raw_payload" type="text" />
-                        <column name="c_version" type="bigint" defaultValueNumeric="0">
-                                <constraints nullable="false" />
-                        </column>
-                        <column name="c_deleted" type="boolean" defaultValueBoolean="false">
-                                <constraints nullable="false" />
-                        </column>
-                </createTable>
-        </changeSet>
+	<changeSet id="payment-3:3" author="domeni.ngameni">
+		<createTable tableName="t_provider_transaction">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_t_provider_transaction" />
+			</column>
+			<column name="c_transaction_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_provider" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_external_id" type="varchar(255)" />
+			<column name="c_payment_url" type="text" />
+			<column name="c_phone" type="varchar(50)" />
+			<column name="c_status" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_raw_payload" type="text" />
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

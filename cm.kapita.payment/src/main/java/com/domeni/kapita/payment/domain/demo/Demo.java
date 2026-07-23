@@ -23,33 +23,33 @@ import org.jspecify.annotations.Nullable;
 @Table(name = "t_demo")
 public class Demo extends SoftDeleteJpaEntity<DemoId> {
 
-    @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "c_id"))
-    private DemoId id = new DemoId();
+  @EmbeddedId
+  @AttributeOverride(name = "value", column = @Column(name = "c_id"))
+  private DemoId id = new DemoId();
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "c_name"))
-    private @Nullable DemoName name;
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "c_name"))
+  private @Nullable DemoName name;
 
-    @Builder
-    public Demo(DemoId id, DemoName name) {
-        this.id = id != null ? id : new DemoId();
-        this.name = name;
+  @Builder
+  public Demo(DemoId id, DemoName name) {
+    this.id = id != null ? id : new DemoId();
+    this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Demo demo)) {
-            return false;
-        }
-        return Objects.equals(id, demo.id);
+    if (!(o instanceof Demo demo)) {
+      return false;
     }
+    return Objects.equals(id, demo.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
 }

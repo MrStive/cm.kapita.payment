@@ -25,57 +25,55 @@ import org.springframework.stereotype.Component;
 @Profile("e2e")
 public class JwtTokenFactory {
 
-    private static final RSAPrivateKey PRIVATE_KEY = loadPrivateKey();
-    private static final String E2E_USER_ID = "44a31cb2-bb38-4734-b8d8-9be15c7fb7b5";
-    private final String audience;
+  private static final RSAPrivateKey PRIVATE_KEY = loadPrivateKey();
+  private static final String E2E_USER_ID = "44a31cb2-bb38-4734-b8d8-9be15c7fb7b5";
+  private final String audience;
 
-    public JwtTokenFactory(@Value("${kapita.security.jwt.audience}") String audience) {
-        this.audience = audience;
+  public JwtTokenFactory(@Value("${kapita.security.jwt.audience}") String audience) {
+    this.audience = audience;
+  }
+
+  public String createToken(String... scopes) {
+    Instant now = Instant.now();
+    String scopeValue = String.join(" ", Arrays.asList(scopes));
+
+    JWTClaimsSet claimsSet =
+        new JWTClaimsSet.Builder()
+            .issuer("http://auth-service.local")
+            .subject(E2E_USER_ID)
+            .issueTime(Date.from(now))
+            .expirationTime(Date.from(now.plusSeconds(3600)))
+            .jwtID(UUID.randomUUID().toString())
+            .audience(List.of(audience))
+            .claim("scope", scopeValue)
+            .build();
+
+    SignedJWT signedJwt =
+        new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).build(), claimsSet);
+
+    try {
+      signedJwt.sign(new RSASSASigner(PRIVATE_KEY));
+      return signedJwt.serialize();
+    } catch (JOSEException e) {
+      throw new IllegalStateException("Unable to sign e2e jwt token", e);
     }
+  }
 
-    public String createToken(String... scopes) {
-        Instant now = Instant.now();
-        String scopeValue = String.join(" ", Arrays.asList(scopes));
+  private static RSAPrivateKey loadPrivateKey() {
+    try {
+      String pem =
+          new String(
+                  new ClassPathResource("security/jwt-private.pem").getInputStream().readAllBytes(),
+                  StandardCharsets.UTF_8)
+              .replace("-----BEGIN PRIVATE KEY-----", "")
+              .replace("-----END PRIVATE KEY-----", "")
+              .replaceAll("\\s", "");
 
-        JWTClaimsSet claimsSet =
-                new JWTClaimsSet.Builder()
-                        .issuer("http://auth-service.local")
-                        .subject(E2E_USER_ID)
-                        .issueTime(Date.from(now))
-                        .expirationTime(Date.from(now.plusSeconds(3600)))
-                        .jwtID(UUID.randomUUID().toString())
-                        .audience(List.of(audience))
-                        .claim("scope", scopeValue)
-                        .build();
-
-        SignedJWT signedJwt =
-                new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).build(), claimsSet);
-
-        try {
-            signedJwt.sign(new RSASSASigner(PRIVATE_KEY));
-            return signedJwt.serialize();
-        } catch (JOSEException e) {
-            throw new IllegalStateException("Unable to sign e2e jwt token", e);
-        }
+      byte[] decodedPem = Base64.getDecoder().decode(pem);
+      PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedPem);
+      return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to load RSA private key for e2e tests", e);
     }
-
-    private static RSAPrivateKey loadPrivateKey() {
-        try {
-            String pem =
-                    new String(
-                                    new ClassPathResource("security/jwt-private.pem")
-                                            .getInputStream()
-                                            .readAllBytes(),
-                                    StandardCharsets.UTF_8)
-                            .replace("-----BEGIN PRIVATE KEY-----", "")
-                            .replace("-----END PRIVATE KEY-----", "")
-                            .replaceAll("\\s", "");
-
-            byte[] decodedPem = Base64.getDecoder().decode(pem);
-            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedPem);
-            return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(keySpec);
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to load RSA private key for e2e tests", e);
-        }
-    }
+  }
 }

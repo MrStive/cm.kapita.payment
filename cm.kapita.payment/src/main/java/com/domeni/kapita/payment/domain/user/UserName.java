@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class UserName {
-    private String value;
+  private String value;
 
-    public UserName(String value) {
-        this.value = StringNormalizer.normalize(value);
-    }
+  public UserName(String value) {
+    this.value = StringNormalizer.normalize(value);
+  }
 }

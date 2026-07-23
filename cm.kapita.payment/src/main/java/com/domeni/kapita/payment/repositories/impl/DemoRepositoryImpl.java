@@ -12,20 +12,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class DemoRepositoryImpl implements DemoRepository {
-    private final DemoSpringRepository demoSpringRepository;
+  private final DemoSpringRepository demoSpringRepository;
 
-    @Override
-    public Demo save(Demo demo) {
-        return demoSpringRepository.save(demo);
-    }
+  @Override
+  public Demo save(Demo demo) {
+    return demoSpringRepository.save(demo);
+  }
 
-    @Override
-    public List<Demo> findAll() {
-        return demoSpringRepository.findAll();
-    }
+  @Override
+  public List<Demo> findAll() {
+    return demoSpringRepository.findAll();
+  }
 
-    @Override
-    public Optional<Demo> findById(DemoId id) {
-        return demoSpringRepository.findById(id);
-    }
+  @Override
+  public Optional<Demo> findById(DemoId id) {
+    return demoSpringRepository.findById(id);
+  }
 }

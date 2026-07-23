@@ -20,44 +20,41 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserFactoryImpl implements UserFactory {
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    @Override
-    public User create(UserCreationData userCreationData) {
-        UUID id = Objects.requireNonNull(userCreationData.id(), "id");
-        String name = Objects.requireNonNull(userCreationData.name(), "name");
-        UserId userId = new UserId(id);
-        return userRepository
-                .findById(userId)
-                .map(
-                        existingUser -> {
-                            log.info(
-                                    "User with id={} already exists, skipping creation",
-                                    userId.getValue());
-                            return existingUser;
-                        })
-                .orElseGet(
-                        () ->
-                                userRepository.save(
-                                        User.builder()
-                                                .id(userId)
-                                                .name(new UserName(name))
-                                                .firstname(
-                                                        mapFirstName(userCreationData.firstname()))
-                                                .lastname(mapLastName(userCreationData.lastname()))
-                                                .email(mapEmail(userCreationData.email()))
-                                                .build()));
-    }
+  @Override
+  public User create(UserCreationData userCreationData) {
+    UUID id = Objects.requireNonNull(userCreationData.id(), "id");
+    String name = Objects.requireNonNull(userCreationData.name(), "name");
+    UserId userId = new UserId(id);
+    return userRepository
+        .findById(userId)
+        .map(
+            existingUser -> {
+              log.info("User with id={} already exists, skipping creation", userId.getValue());
+              return existingUser;
+            })
+        .orElseGet(
+            () ->
+                userRepository.save(
+                    User.builder()
+                        .id(userId)
+                        .name(new UserName(name))
+                        .firstname(mapFirstName(userCreationData.firstname()))
+                        .lastname(mapLastName(userCreationData.lastname()))
+                        .email(mapEmail(userCreationData.email()))
+                        .build()));
+  }
 
-    private @Nullable UserFirstName mapFirstName(@Nullable String value) {
-        return value == null ? null : new UserFirstName(value);
-    }
+  private @Nullable UserFirstName mapFirstName(@Nullable String value) {
+    return value == null ? null : new UserFirstName(value);
+  }
 
-    private @Nullable UserLastName mapLastName(@Nullable String value) {
-        return value == null ? null : new UserLastName(value);
-    }
+  private @Nullable UserLastName mapLastName(@Nullable String value) {
+    return value == null ? null : new UserLastName(value);
+  }
 
-    private @Nullable UserEmail mapEmail(@Nullable String value) {
-        return value == null ? null : new UserEmail(value.trim());
-    }
+  private @Nullable UserEmail mapEmail(@Nullable String value) {
+    return value == null ? null : new UserEmail(value.trim());
+  }
 }

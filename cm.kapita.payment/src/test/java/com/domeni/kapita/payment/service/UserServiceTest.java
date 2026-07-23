@@ -20,69 +20,68 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @Mock private UserFactory userFactory;
+  @Mock private UserFactory userFactory;
 
-    @InjectMocks private UserService userService;
+  @InjectMocks private UserService userService;
 
-    @Captor private ArgumentCaptor<UserCreationData> userCreationDataCaptor;
+  @Captor private ArgumentCaptor<UserCreationData> userCreationDataCaptor;
 
-    @Test
-    void createUserShouldNormalizeAndDelegateToFactoryTest() {
-        // Given
-        UUID userId = UUID.randomUUID();
-        UserCreationData input =
-                UserCreationData.builder()
-                        .id(userId)
-                        .name("  john.doe  ")
-                        .firstname("  John  ")
-                        .lastname(" Doe ")
-                        .email(" john.doe@example.com ")
-                        .build();
+  @Test
+  void createUserShouldNormalizeAndDelegateToFactoryTest() {
+    // Given
+    UUID userId = UUID.randomUUID();
+    UserCreationData input =
+        UserCreationData.builder()
+            .id(userId)
+            .name("  john.doe  ")
+            .firstname("  John  ")
+            .lastname(" Doe ")
+            .email(" john.doe@example.com ")
+            .build();
 
-        // When
-        userService.createUser(input);
+    // When
+    userService.createUser(input);
 
-        // Then
-        then(userFactory).should().create(userCreationDataCaptor.capture());
-        // Normalization now happens inside the domain objects created by the factory,
-        // so the service passes the raw data.
-        assertThat(userCreationDataCaptor.getValue()).isEqualTo(input);
-    }
+    // Then
+    then(userFactory).should().create(userCreationDataCaptor.capture());
+    // Normalization now happens inside the domain objects created by the factory,
+    // so the service passes the raw data.
+    assertThat(userCreationDataCaptor.getValue()).isEqualTo(input);
+  }
 
-    @Test
-    void createUserWhenInputIsNullShouldThrowInvalidUserPayloadExceptionTest() {
-        // When / Then
-        assertThatThrownBy(() -> userService.createUser(null))
-                .isInstanceOf(InvalidUserPayloadException.class)
-                .hasMessage("user creation payload is required and must be valid");
+  @Test
+  void createUserWhenInputIsNullShouldThrowInvalidUserPayloadExceptionTest() {
+    // When / Then
+    assertThatThrownBy(() -> userService.createUser(null))
+        .isInstanceOf(InvalidUserPayloadException.class)
+        .hasMessage("user creation payload is required and must be valid");
 
-        verifyNoInteractions(userFactory);
-    }
+    verifyNoInteractions(userFactory);
+  }
 
-    @Test
-    void createUserWhenIdIsMissingShouldThrowInvalidUserPayloadExceptionTest() {
-        // Given
-        UserCreationData input = UserCreationData.builder().name("john.doe").build();
+  @Test
+  void createUserWhenIdIsMissingShouldThrowInvalidUserPayloadExceptionTest() {
+    // Given
+    UserCreationData input = UserCreationData.builder().name("john.doe").build();
 
-        // When / Then
-        assertThatThrownBy(() -> userService.createUser(input))
-                .isInstanceOf(InvalidUserPayloadException.class)
-                .hasMessage("user creation payload is required and must be valid");
+    // When / Then
+    assertThatThrownBy(() -> userService.createUser(input))
+        .isInstanceOf(InvalidUserPayloadException.class)
+        .hasMessage("user creation payload is required and must be valid");
 
-        verifyNoInteractions(userFactory);
-    }
+    verifyNoInteractions(userFactory);
+  }
 
-    @Test
-    void createUserWhenNameIsBlankShouldThrowInvalidUserPayloadExceptionTest() {
-        // Given
-        UserCreationData input =
-                UserCreationData.builder().id(UUID.randomUUID()).name("   ").build();
+  @Test
+  void createUserWhenNameIsBlankShouldThrowInvalidUserPayloadExceptionTest() {
+    // Given
+    UserCreationData input = UserCreationData.builder().id(UUID.randomUUID()).name("   ").build();
 
-        // When / Then
-        assertThatThrownBy(() -> userService.createUser(input))
-                .isInstanceOf(InvalidUserPayloadException.class)
-                .hasMessage("user creation payload is required and must be valid");
+    // When / Then
+    assertThatThrownBy(() -> userService.createUser(input))
+        .isInstanceOf(InvalidUserPayloadException.class)
+        .hasMessage("user creation payload is required and must be valid");
 
-        verifyNoInteractions(userFactory);
-    }
+    verifyNoInteractions(userFactory);
+  }
 }

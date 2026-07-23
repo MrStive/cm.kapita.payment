@@ -12,17 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DemoFetcherImpl implements DemoFetcher {
-    private final DemoRepository demoRepository;
+  private final DemoRepository demoRepository;
 
-    @Override
-    public List<Demo> loadAllDemos() {
-        return demoRepository.findAll();
-    }
+  @Override
+  public List<Demo> loadAllDemos() {
+    return demoRepository.findAll();
+  }
 
-    @Override
-    public Demo getById(UUID id) {
-        return demoRepository
-                .findById(new DemoId(id.toString()))
-                .orElseThrow(() -> new RuntimeException("Demo not found: " + id));
-    }
+  @Override
+  public Demo getById(UUID id) {
+    return demoRepository
+        .findById(new DemoId(id.toString()))
+        .orElseThrow(() -> new RuntimeException("Demo not found: " + id));
+  }
 }

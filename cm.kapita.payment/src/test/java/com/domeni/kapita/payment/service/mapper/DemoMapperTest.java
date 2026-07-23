@@ -14,61 +14,61 @@ import org.mapstruct.factory.Mappers;
 
 class DemoMapperTest {
 
-    private final DemoMapper demoMapper = Mappers.getMapper(DemoMapper.class);
+  private final DemoMapper demoMapper = Mappers.getMapper(DemoMapper.class);
 
-    @Test
-    void mapCreateDemoDtoShouldReturnDemoDataWithNameTest() {
-        // Given
-        CreateDemoDTO input = new CreateDemoDTO().name("demo-name");
+  @Test
+  void mapCreateDemoDtoShouldReturnDemoDataWithNameTest() {
+    // Given
+    CreateDemoDTO input = new CreateDemoDTO().name("demo-name");
 
-        // When
-        DemoData result = demoMapper.map(input);
+    // When
+    DemoData result = demoMapper.map(input);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.name()).isEqualTo("demo-name");
-    }
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.name()).isEqualTo("demo-name");
+  }
 
-    @Test
-    void mapCreateDemoDtoWhenInputIsNullShouldReturnNullTest() {
-        // When
-        DemoData result = demoMapper.map((CreateDemoDTO) null);
+  @Test
+  void mapCreateDemoDtoWhenInputIsNullShouldReturnNullTest() {
+    // When
+    DemoData result = demoMapper.map((CreateDemoDTO) null);
 
-        // Then
-        assertThat(result).isNull();
-    }
+    // Then
+    assertThat(result).isNull();
+  }
 
-    @Test
-    void mapDemoShouldReturnDemoDtoWithIdAndNameTest() {
-        // Given
-        UUID expectedId = UUID.randomUUID();
-        Demo input = new Demo();
-        input.setId(new DemoId(expectedId.toString()));
-        input.setName(new DemoName("demo-name"));
+  @Test
+  void mapDemoShouldReturnDemoDtoWithIdAndNameTest() {
+    // Given
+    UUID expectedId = UUID.randomUUID();
+    Demo input = new Demo();
+    input.setId(new DemoId(expectedId.toString()));
+    input.setName(new DemoName("demo-name"));
 
-        // When
-        DemoDTO result = demoMapper.map(input);
+    // When
+    DemoDTO result = demoMapper.map(input);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(expectedId);
-        assertThat(result.getName()).isEqualTo("demo-name");
-    }
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(expectedId);
+    assertThat(result.getName()).isEqualTo("demo-name");
+  }
 
-    @Test
-    void mapDemoWhenDemoNameIsNullShouldReturnDtoWithNullNameTest() {
-        // Given
-        UUID expectedId = UUID.randomUUID();
-        Demo input = new Demo();
-        input.setId(new DemoId(expectedId.toString()));
-        input.setName(null);
+  @Test
+  void mapDemoWhenDemoNameIsNullShouldReturnDtoWithNullNameTest() {
+    // Given
+    UUID expectedId = UUID.randomUUID();
+    Demo input = new Demo();
+    input.setId(new DemoId(expectedId.toString()));
+    input.setName(null);
 
-        // When
-        DemoDTO result = demoMapper.map(input);
+    // When
+    DemoDTO result = demoMapper.map(input);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(expectedId);
-        assertThat(result.getName()).isNull();
-    }
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(expectedId);
+    assertThat(result.getName()).isNull();
+  }
 }

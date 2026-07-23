@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProviderAttemptRepository
-        extends JpaRepository<ProviderAttempt, ProviderAttemptId> {
-    Optional<ProviderAttempt> findByPaymentIntentId(PaymentIntentId paymentIntentId);
+    extends JpaRepository<ProviderAttempt, ProviderAttemptId> {
+  Optional<ProviderAttempt> findByPaymentIntentId(PaymentIntentId paymentIntentId);
 }

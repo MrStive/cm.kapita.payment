@@ -8,29 +8,29 @@ import org.javamoney.moneta.Money;
 
 @Converter
 public class MonetaryAmountConverter implements AttributeConverter<MonetaryAmount, String> {
-    private static final String SEPARATOR = ";";
+  private static final String SEPARATOR = ";";
 
-    @Override
-    public String convertToDatabaseColumn(MonetaryAmount attribute) {
-        if (attribute == null) {
-            return null;
-        }
-
-        BigDecimal value = attribute.getNumber().numberValueExact(BigDecimal.class);
-        return attribute.getCurrency().getCurrencyCode() + SEPARATOR + value.toPlainString();
+  @Override
+  public String convertToDatabaseColumn(MonetaryAmount attribute) {
+    if (attribute == null) {
+      return null;
     }
 
-    @Override
-    public MonetaryAmount convertToEntityAttribute(String dbData) {
-        if (dbData == null || dbData.isBlank()) {
-            return null;
-        }
+    BigDecimal value = attribute.getNumber().numberValueExact(BigDecimal.class);
+    return attribute.getCurrency().getCurrencyCode() + SEPARATOR + value.toPlainString();
+  }
 
-        String[] tokens = dbData.split(SEPARATOR, 2);
-        if (tokens.length != 2 || tokens[0].isBlank() || tokens[1].isBlank()) {
-            throw new IllegalArgumentException("invalid monetary amount value: " + dbData);
-        }
-
-        return Money.of(new BigDecimal(tokens[1]), tokens[0]);
+  @Override
+  public MonetaryAmount convertToEntityAttribute(String dbData) {
+    if (dbData == null || dbData.isBlank()) {
+      return null;
     }
+
+    String[] tokens = dbData.split(SEPARATOR, 2);
+    if (tokens.length != 2 || tokens[0].isBlank() || tokens[1].isBlank()) {
+      throw new IllegalArgumentException("invalid monetary amount value: " + dbData);
+    }
+
+    return Money.of(new BigDecimal(tokens[1]), tokens[0]);
+  }
 }

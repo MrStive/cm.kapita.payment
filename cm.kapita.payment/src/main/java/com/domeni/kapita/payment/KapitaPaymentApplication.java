@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class KapitaPaymentApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(KapitaPaymentApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(KapitaPaymentApplication.class, args);
+  }
 }

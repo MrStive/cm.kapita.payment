@@ -20,38 +20,38 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class DemoFactoryImplTest {
 
-    @Mock private DemoRepository demoRepository;
+  @Mock private DemoRepository demoRepository;
 
-    @InjectMocks private DemoFactoryImpl demoFactory;
+  @InjectMocks private DemoFactoryImpl demoFactory;
 
-    @Test
-    void createShouldBuildAndPersistDemoFromDemoDataTest() {
-        // Given
-        DemoData input = new DemoData("demo-name");
-        Demo persistedDemo = new Demo();
-        given(demoRepository.save(any(Demo.class))).willReturn(persistedDemo);
+  @Test
+  void createShouldBuildAndPersistDemoFromDemoDataTest() {
+    // Given
+    DemoData input = new DemoData("demo-name");
+    Demo persistedDemo = new Demo();
+    given(demoRepository.save(any(Demo.class))).willReturn(persistedDemo);
 
-        // When
-        Demo result = demoFactory.create(input);
+    // When
+    Demo result = demoFactory.create(input);
 
-        // Then
-        assertThat(result).isSameAs(persistedDemo);
+    // Then
+    assertThat(result).isSameAs(persistedDemo);
 
-        ArgumentCaptor<Demo> demoCaptor = ArgumentCaptor.forClass(Demo.class);
-        then(demoRepository).should().save(demoCaptor.capture());
+    ArgumentCaptor<Demo> demoCaptor = ArgumentCaptor.forClass(Demo.class);
+    then(demoRepository).should().save(demoCaptor.capture());
 
-        Demo demoToSave = demoCaptor.getValue();
-        assertThat(demoToSave.getId()).isNotNull();
-        assertThat(demoToSave.getId().getValue()).isNotBlank();
-        assertThat(demoToSave.getName()).isNotNull();
-        assertThat(demoToSave.getName().getValue()).isEqualTo("demo-name");
-    }
+    Demo demoToSave = demoCaptor.getValue();
+    assertThat(demoToSave.getId()).isNotNull();
+    assertThat(demoToSave.getId().getValue()).isNotBlank();
+    assertThat(demoToSave.getName()).isNotNull();
+    assertThat(demoToSave.getName().getValue()).isEqualTo("demo-name");
+  }
 
-    @Test
-    void createWhenDemoDataIsNullShouldThrowNullPointerExceptionTest() {
-        // When / Then
-        assertThatThrownBy(() -> demoFactory.create(null)).isInstanceOf(NullPointerException.class);
+  @Test
+  void createWhenDemoDataIsNullShouldThrowNullPointerExceptionTest() {
+    // When / Then
+    assertThatThrownBy(() -> demoFactory.create(null)).isInstanceOf(NullPointerException.class);
 
-        verifyNoInteractions(demoRepository);
-    }
+    verifyNoInteractions(demoRepository);
+  }
 }

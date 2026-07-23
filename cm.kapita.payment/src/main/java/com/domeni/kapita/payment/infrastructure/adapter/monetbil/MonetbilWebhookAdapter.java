@@ -20,71 +20,71 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @SuppressWarnings("NullAway.Init")
 public class MonetbilWebhookAdapter {
-    private final PaymentNotificationService paymentNotificationService;
+  private final PaymentNotificationService paymentNotificationService;
 
-    @Value("${app.monetbil.service-secret}")
-    private String serviceSecret;
+  @Value("${app.monetbil.service-secret}")
+  private String serviceSecret;
 
-    public void handle(UUID providerAttemptId, Map<String, String> payload) {
-        verifySignature(payload);
+  public void handle(UUID providerAttemptId, Map<String, String> payload) {
+    verifySignature(payload);
 
-        PaymentNotification notification =
-                new PaymentNotification(
-                        providerAttemptId,
-                        payload.get("status"),
-                        payload.get("transaction_id"),
-                        parseAmount(payload.get("amount")),
-                        payload.get("currency"),
-                        payload);
+    PaymentNotification notification =
+        new PaymentNotification(
+            providerAttemptId,
+            payload.get("status"),
+            payload.get("transaction_id"),
+            parseAmount(payload.get("amount")),
+            payload.get("currency"),
+            payload);
 
-        paymentNotificationService.handle(notification);
+    paymentNotificationService.handle(notification);
+  }
+
+  private @Nullable BigDecimal parseAmount(@Nullable String rawAmount) {
+    if (rawAmount == null || rawAmount.isBlank()) {
+      return null;
+    }
+    return new BigDecimal(rawAmount);
+  }
+
+  private void verifySignature(Map<String, String> payload) {
+    String receivedSign = payload.get("sign");
+    if (receivedSign == null || receivedSign.isBlank()) {
+      throw new IllegalArgumentException("Missing Monetbil sign");
     }
 
-    private @Nullable BigDecimal parseAmount(@Nullable String rawAmount) {
-        if (rawAmount == null || rawAmount.isBlank()) {
-            return null;
-        }
-        return new BigDecimal(rawAmount);
+    if (serviceSecret == null || serviceSecret.isBlank()) {
+      throw new IllegalStateException("Monetbil service secret is not configured");
     }
 
-    private void verifySignature(Map<String, String> payload) {
-        String receivedSign = payload.get("sign");
-        if (receivedSign == null || receivedSign.isBlank()) {
-            throw new IllegalArgumentException("Missing Monetbil sign");
-        }
+    List<Map.Entry<String, String>> entries = new ArrayList<>(payload.entrySet());
+    entries.removeIf(entry -> "sign".equals(entry.getKey()));
+    entries.sort(Map.Entry.comparingByKey());
 
-        if (serviceSecret == null || serviceSecret.isBlank()) {
-            throw new IllegalStateException("Monetbil service secret is not configured");
-        }
+    String joinedValues =
+        entries.stream()
+            .map(entry -> entry.getValue() == null ? "" : entry.getValue())
+            .collect(Collectors.joining(","));
+    String expectedSign = md5Hex(serviceSecret + joinedValues);
 
-        List<Map.Entry<String, String>> entries = new ArrayList<>(payload.entrySet());
-        entries.removeIf(entry -> "sign".equals(entry.getKey()));
-        entries.sort(Map.Entry.comparingByKey());
-
-        String joinedValues =
-                entries.stream()
-                        .map(entry -> entry.getValue() == null ? "" : entry.getValue())
-                        .collect(Collectors.joining(","));
-        String expectedSign = md5Hex(serviceSecret + joinedValues);
-
-        if (!MessageDigest.isEqual(
-                receivedSign.getBytes(StandardCharsets.UTF_8),
-                expectedSign.getBytes(StandardCharsets.UTF_8))) {
-            throw new IllegalArgumentException("Invalid Monetbil sign");
-        }
+    if (!MessageDigest.isEqual(
+        receivedSign.getBytes(StandardCharsets.UTF_8),
+        expectedSign.getBytes(StandardCharsets.UTF_8))) {
+      throw new IllegalArgumentException("Invalid Monetbil sign");
     }
+  }
 
-    private String md5Hex(String value) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            byte[] hash = digest.digest(value.getBytes(StandardCharsets.UTF_8));
-            StringBuilder builder = new StringBuilder(hash.length * 2);
-            for (byte b : hash) {
-                builder.append(String.format("%02x", b));
-            }
-            return builder.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("MD5 algorithm not available", e);
-        }
+  private String md5Hex(String value) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("MD5");
+      byte[] hash = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+      StringBuilder builder = new StringBuilder(hash.length * 2);
+      for (byte b : hash) {
+        builder.append(String.format("%02x", b));
+      }
+      return builder.toString();
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("MD5 algorithm not available", e);
     }
+  }
 }

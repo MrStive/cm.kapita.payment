@@ -14,50 +14,59 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @SuppressWarnings("NullAway.Init")
 public class PaymentPersistenceService {
-    private final PaymentIntentRepository paymentIntentRepository;
-    private final ProviderAttemptRepository providerAttemptRepository;
-    private final PaymentStatusPublisher paymentStatusPublisher;
+  private final PaymentIntentRepository paymentIntentRepository;
+  private final ProviderAttemptRepository providerAttemptRepository;
+  private final PaymentStatusPublisher paymentStatusPublisher;
 
-    @Transactional(readOnly = true)
-    public Optional<PaymentIntent> findByIdempotencyKey(String idempotencyKey) {
-        return paymentIntentRepository.findByIdempotencyKey(idempotencyKey);
+  @Transactional(readOnly = true)
+  public Optional<PaymentIntent> findByIdempotencyKey(String idempotencyKey) {
+    return paymentIntentRepository.findByIdempotencyKey(idempotencyKey);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<ProviderAttempt> findAttempt(PaymentIntent paymentIntent) {
+    return providerAttemptRepository.findByPaymentIntentId(paymentIntent.getId());
+  }
+
+  @Transactional
+  public LocalPayment create(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {
+    paymentIntentRepository.saveAndFlush(paymentIntent);
+    providerAttemptRepository.saveAndFlush(providerAttempt);
+    return new LocalPayment(paymentIntent, providerAttempt);
+  }
+
+  @Transactional
+  public LocalPayment markPaymentPending(
+      PaymentIntent paymentIntent,
+      ProviderAttempt providerAttempt,
+      String providerReference,
+      String paymentUrl,
+      String rawResponse) {
+    ProviderAttempt reloadedAttempt =
+        providerAttemptRepository.findById(providerAttempt.getId()).orElse(providerAttempt);
+    PaymentIntent reloadedIntent =
+        paymentIntentRepository.findById(paymentIntent.getId()).orElse(paymentIntent);
+
+    if (reloadedIntent.isFinal() || reloadedAttempt.isFinal()) {
+      return new LocalPayment(reloadedIntent, reloadedAttempt);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<ProviderAttempt> findAttempt(PaymentIntent paymentIntent) {
-        return providerAttemptRepository.findByPaymentIntentId(paymentIntent.getId());
-    }
+    reloadedAttempt.markPending(providerReference, paymentUrl, rawResponse);
+    reloadedIntent.markPaymentPending();
+    providerAttemptRepository.saveAndFlush(reloadedAttempt);
+    paymentIntentRepository.saveAndFlush(reloadedIntent);
+    return new LocalPayment(reloadedIntent, reloadedAttempt);
+  }
 
-    @Transactional
-    public LocalPayment create(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {
-        paymentIntentRepository.saveAndFlush(paymentIntent);
-        providerAttemptRepository.saveAndFlush(providerAttempt);
-        return new LocalPayment(paymentIntent, providerAttempt);
-    }
+  @Transactional
+  public void markInitiationFailed(
+      PaymentIntent paymentIntent, ProviderAttempt providerAttempt, String reason) {
+    providerAttempt.markFailed(reason, null); // rawPayload not available at initiation failure
+    paymentIntent.markFailed(reason);
+    providerAttemptRepository.save(providerAttempt);
+    paymentIntentRepository.save(paymentIntent);
+    paymentStatusPublisher.publish(paymentIntent, providerAttempt);
+  }
 
-    @Transactional
-    public LocalPayment markPaymentPending(
-            PaymentIntent paymentIntent,
-            ProviderAttempt providerAttempt,
-            String providerReference,
-            String paymentUrl,
-            String rawResponse) {
-        providerAttempt.markPending(providerReference, paymentUrl, rawResponse);
-        paymentIntent.markPaymentPending();
-        providerAttemptRepository.saveAndFlush(providerAttempt);
-        paymentIntentRepository.saveAndFlush(paymentIntent);
-        return new LocalPayment(paymentIntent, providerAttempt);
-    }
-
-    @Transactional
-    public void markInitiationFailed(
-            PaymentIntent paymentIntent, ProviderAttempt providerAttempt, String reason) {
-        providerAttempt.markFailed(reason, null); // rawPayload not available at initiation failure
-        paymentIntent.markFailed(reason);
-        providerAttemptRepository.save(providerAttempt);
-        paymentIntentRepository.save(paymentIntent);
-        paymentStatusPublisher.publish(paymentIntent, providerAttempt);
-    }
-
-    public record LocalPayment(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {}
+  public record LocalPayment(PaymentIntent paymentIntent, ProviderAttempt providerAttempt) {}
 }

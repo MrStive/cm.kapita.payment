@@ -18,22 +18,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UserCreatedInboundEventHandlerTest {
 
-    @Mock private UserService userService;
-    @Mock private UserEventMapper userEventMapper;
+  @Mock private UserService userService;
+  @Mock private UserEventMapper userEventMapper;
 
-    @InjectMocks private UserCreatedInboundEventHandler userCreatedInboundEventHandler;
+  @InjectMocks private UserCreatedInboundEventHandler userCreatedInboundEventHandler;
 
-    @Test
-    void handleShouldCallCreateUserUseCaseTest() {
-        UUID userId = UUID.randomUUID();
-        UserCreatedEventDTO event = new UserCreatedEventDTO().id(userId).username("john.doe");
-        UserCreationData command = UserCreationData.builder().id(userId).name("john.doe").build();
-        given(userEventMapper.map(event)).willReturn(command);
+  @Test
+  void handleShouldCallCreateUserUseCaseTest() {
+    UUID userId = UUID.randomUUID();
+    UserCreatedEventDTO event = new UserCreatedEventDTO().id(userId).username("john.doe");
+    UserCreationData command = UserCreationData.builder().id(userId).name("john.doe").build();
+    given(userEventMapper.map(event)).willReturn(command);
 
-        userCreatedInboundEventHandler.handle(
-                event, new InboundEventContext("authentis.user.created", 0, 10L));
+    userCreatedInboundEventHandler.handle(
+        event, new InboundEventContext("authentis.user.created", 0, 10L));
 
-        then(userEventMapper).should().map(event);
-        then(userService).should().createUser(command);
-    }
+    then(userEventMapper).should().map(event);
+    then(userService).should().createUser(command);
+  }
 }
