@@ -7,12 +7,12 @@ import lombok.NonNull;
 @Embeddable
 @Getter
 public class UserEmail {
-    private String value;
+  private String value;
 
-    @SuppressWarnings("NullAway.Init")
-    protected UserEmail() {}
+  @SuppressWarnings("NullAway.Init")
+  protected UserEmail() {}
 
-    public UserEmail(@NonNull String value) {
-        this.value = StringNormalizer.normalize(value);
-    }
+  public UserEmail(@NonNull String value) {
+    this.value = StringNormalizer.normalize(value);
+  }
 }

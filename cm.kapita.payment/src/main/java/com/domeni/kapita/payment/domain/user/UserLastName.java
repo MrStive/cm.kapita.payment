@@ -8,13 +8,12 @@ import lombok.Getter;
 @EqualsAndHashCode
 @Getter
 public class UserLastName {
-    private String value;
+  private String value;
 
-    @SuppressWarnings("NullAway.Init")
-    protected UserLastName() {
-    }
+  @SuppressWarnings("NullAway.Init")
+  protected UserLastName() {}
 
-    public UserLastName(String value) {
-        this.value = StringNormalizer.normalize(value);
-    }
+  public UserLastName(String value) {
+    this.value = StringNormalizer.normalize(value);
+  }
 }

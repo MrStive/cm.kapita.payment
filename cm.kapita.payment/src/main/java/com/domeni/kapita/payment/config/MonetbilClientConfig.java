@@ -11,13 +11,12 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class MonetbilClientConfig {
 
-    @Bean
-    public MonetbilApi monetbilApi(
-            RestClient.Builder restClientBuilder,
-            @Value("${app.monetbil.base-url}") String baseUrl) {
-        RestClient restClient = restClientBuilder.baseUrl(baseUrl).build();
-        HttpServiceProxyFactory factory =
-                HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient)).build();
-        return factory.createClient(MonetbilApi.class);
-    }
+  @Bean
+  public MonetbilApi monetbilApi(
+      RestClient.Builder restClientBuilder, @Value("${app.monetbil.base-url}") String baseUrl) {
+    RestClient restClient = restClientBuilder.baseUrl(baseUrl).build();
+    HttpServiceProxyFactory factory =
+        HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient)).build();
+    return factory.createClient(MonetbilApi.class);
+  }
 }

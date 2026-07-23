@@ -13,25 +13,25 @@ import org.jspecify.annotations.Nullable;
 @Setter
 @NoArgsConstructor
 public class DemoName implements Serializable {
-    private @Nullable String value;
+  private @Nullable String value;
 
-    public DemoName(String value) {
-        this.value = value;
-    }
+  public DemoName(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof DemoName demoName)) {
-            return false;
-        }
-        return Objects.equals(value, demoName.value);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (!(o instanceof DemoName demoName)) {
+      return false;
+    }
+    return Objects.equals(value, demoName.value);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(value);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(value);
+  }
 }

@@ -7,10 +7,10 @@ import lombok.Builder;
 
 @Builder
 public record PaymentInitiationRequest(
-        PaymentIntentId paymentIntentId,
-        ProviderAttemptId providerAttemptId,
-        MonetaryAmount amount,
-        String phoneNumber,
-        String provider,
-        String returnUrl,
-        String description) {}
+    PaymentIntentId paymentIntentId,
+    ProviderAttemptId providerAttemptId,
+    MonetaryAmount amount,
+    String phoneNumber,
+    String provider,
+    String returnUrl,
+    String description) {}

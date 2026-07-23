@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DemoFetcher {
-    List<Demo> loadAllDemos();
+  List<Demo> loadAllDemos();
 
-    Demo getById(UUID id);
+  Demo getById(UUID id);
 }

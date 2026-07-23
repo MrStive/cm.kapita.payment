@@ -1,50 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="payment-4:1" author="domeni.ngameni">
-        <createTable tableName="t_outbox_event">
-            <column name="c_id" type="varchar(36)">
-                <constraints nullable="false" primaryKey="true"
-                             primaryKeyName="pk_t_outbox_event" />
-            </column>
-            <column name="c_aggregate_id" type="varchar(36)">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_event_type" type="varchar(100)">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_payload" type="text">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_created_at" type="timestamp">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_published_at" type="timestamp" />
-            <column name="c_next_attempt_at" type="timestamp" />
-            <column name="c_attempts" type="integer" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_last_error" type="varchar(1000)" />
-            <column name="c_status" type="varchar(32)">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_version" type="bigint" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="c_deleted" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <createIndex tableName="t_outbox_event" indexName="idx_outbox_status_created">
-            <column name="c_status" />
-            <column name="c_created_at" />
-        </createIndex>
-        <createIndex tableName="t_outbox_event" indexName="idx_outbox_status_next_attempt">
-            <column name="c_status" />
-            <column name="c_next_attempt_at" />
-        </createIndex>
-    </changeSet>
+	<changeSet id="payment-4:1" author="domeni.ngameni">
+		<createTable tableName="t_outbox_event">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_t_outbox_event" />
+			</column>
+			<column name="c_aggregate_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_event_type" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_payload" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_created_at" type="timestamp">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_published_at" type="timestamp" />
+			<column name="c_next_attempt_at" type="timestamp" />
+			<column name="c_attempts" type="integer"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_last_error" type="varchar(1000)" />
+			<column name="c_status" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createIndex tableName="t_outbox_event"
+			indexName="idx_outbox_status_created">
+			<column name="c_status" />
+			<column name="c_created_at" />
+		</createIndex>
+		<createIndex tableName="t_outbox_event"
+			indexName="idx_outbox_status_next_attempt">
+			<column name="c_status" />
+			<column name="c_next_attempt_at" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>

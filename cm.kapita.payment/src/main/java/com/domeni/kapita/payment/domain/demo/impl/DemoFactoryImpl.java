@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DemoFactoryImpl implements DemoFactory {
-    private final DemoRepository demoRepository;
+  private final DemoRepository demoRepository;
 
-    @Override
-    public Demo create(DemoData data) {
-        Demo demo = Demo.builder().name(new DemoName(data.name())).build();
-        return demoRepository.save(demo);
-    }
+  @Override
+  public Demo create(DemoData data) {
+    Demo demo = Demo.builder().name(new DemoName(data.name())).build();
+    return demoRepository.save(demo);
+  }
 }

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DemoRepository {
-    Demo save(Demo demo);
+  Demo save(Demo demo);
 
-    List<Demo> findAll();
+  List<Demo> findAll();
 
-    Optional<Demo> findById(DemoId id);
+  Optional<Demo> findById(DemoId id);
 }

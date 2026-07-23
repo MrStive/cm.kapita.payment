@@ -13,29 +13,29 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UserId implements Serializable {
-    private String value = UUID.randomUUID().toString();
+  private String value = UUID.randomUUID().toString();
 
-    public UserId(UUID value) {
-        this.value = Objects.requireNonNull(value, "value").toString();
-    }
+  public UserId(UUID value) {
+    this.value = Objects.requireNonNull(value, "value").toString();
+  }
 
-    public UUID toUUID() {
-        return UUID.fromString(value);
-    }
+  public UUID toUUID() {
+    return UUID.fromString(value);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof UserId userId)) {
-            return false;
-        }
-        return Objects.equals(value, userId.value);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (!(o instanceof UserId userId)) {
+      return false;
+    }
+    return Objects.equals(value, userId.value);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(value);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(value);
+  }
 }

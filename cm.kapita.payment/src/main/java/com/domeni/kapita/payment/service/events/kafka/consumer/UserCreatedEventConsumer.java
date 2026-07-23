@@ -14,18 +14,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserCreatedEventConsumer {
 
-    private final KafkaInboundConsumer kafkaInboundConsumer;
+  private final KafkaInboundConsumer kafkaInboundConsumer;
 
-    @KafkaListener(
-            topics = "${kapita.messaging.user-created.topic:authentis.user.created}",
-            groupId = "${spring.kafka.consumer.group-id:payment-service}",
-            containerFactory = KafkaInboundBeanNames.LISTENER_CONTAINER_FACTORY)
-    public void handleUserCreatedEvent(
-            @Payload byte[] raw,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset,
-            Acknowledgment acknowledgment) {
-        kafkaInboundConsumer.consume(raw, topic, partition, offset, acknowledgment);
-    }
+  @KafkaListener(
+      topics = "${kapita.messaging.user-created.topic:authentis.user.created}",
+      groupId = "${spring.kafka.consumer.group-id:payment-service}",
+      containerFactory = KafkaInboundBeanNames.LISTENER_CONTAINER_FACTORY)
+  public void handleUserCreatedEvent(
+      @Payload byte[] raw,
+      @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+      @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
+      @Header(KafkaHeaders.OFFSET) long offset,
+      Acknowledgment acknowledgment) {
+    kafkaInboundConsumer.consume(raw, topic, partition, offset, acknowledgment);
+  }
 }

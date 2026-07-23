@@ -21,100 +21,100 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UserFactoryImplTest {
 
-    @Mock private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-    @InjectMocks private UserFactoryImpl userFactory;
+  @InjectMocks private UserFactoryImpl userFactory;
 
-    @Test
-    void createShouldBuildAndPersistUserFromCreationDataTest() {
-        // Given
-        UUID userId = UUID.randomUUID();
-        UserCreationData input =
-                UserCreationData.builder()
-                        .id(userId)
-                        .name("john.doe")
-                        .firstname("John")
-                        .lastname("Doe")
-                        .email("john.doe@example.com")
-                        .build();
-        given(userRepository.findById(any(UserId.class))).willReturn(Optional.empty());
-        User persistedUser = new User();
-        given(userRepository.save(any(User.class))).willReturn(persistedUser);
+  @Test
+  void createShouldBuildAndPersistUserFromCreationDataTest() {
+    // Given
+    UUID userId = UUID.randomUUID();
+    UserCreationData input =
+        UserCreationData.builder()
+            .id(userId)
+            .name("john.doe")
+            .firstname("John")
+            .lastname("Doe")
+            .email("john.doe@example.com")
+            .build();
+    given(userRepository.findById(any(UserId.class))).willReturn(Optional.empty());
+    User persistedUser = new User();
+    given(userRepository.save(any(User.class))).willReturn(persistedUser);
 
-        // When
-        User result = userFactory.create(input);
+    // When
+    User result = userFactory.create(input);
 
-        // Then
-        assertThat(result).isSameAs(persistedUser);
+    // Then
+    assertThat(result).isSameAs(persistedUser);
 
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        then(userRepository).should().findById(any(UserId.class));
-        then(userRepository).should().save(userCaptor.capture());
+    ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+    then(userRepository).should().findById(any(UserId.class));
+    then(userRepository).should().save(userCaptor.capture());
 
-        User userToSave = userCaptor.getValue();
-        assertThat(userToSave.getId()).isNotNull();
-        assertThat(userToSave.getId().toUUID()).isEqualTo(userId);
-        assertThat(userToSave.getName()).isNotNull();
-        assertThat(userToSave.getName().getValue()).isEqualTo("john.doe");
-        assertThat(userToSave.getFirstname()).isNotNull();
-        assertThat(userToSave.getFirstname().getValue()).isEqualTo("John");
-        assertThat(userToSave.getLastname()).isNotNull();
-        assertThat(userToSave.getLastname().getValue()).isEqualTo("Doe");
-        assertThat(userToSave.getEmail()).isNotNull();
-        assertThat(userToSave.getEmail().getValue()).isEqualTo("john.doe@example.com");
-    }
+    User userToSave = userCaptor.getValue();
+    assertThat(userToSave.getId()).isNotNull();
+    assertThat(userToSave.getId().toUUID()).isEqualTo(userId);
+    assertThat(userToSave.getName()).isNotNull();
+    assertThat(userToSave.getName().getValue()).isEqualTo("john.doe");
+    assertThat(userToSave.getFirstname()).isNotNull();
+    assertThat(userToSave.getFirstname().getValue()).isEqualTo("John");
+    assertThat(userToSave.getLastname()).isNotNull();
+    assertThat(userToSave.getLastname().getValue()).isEqualTo("Doe");
+    assertThat(userToSave.getEmail()).isNotNull();
+    assertThat(userToSave.getEmail().getValue()).isEqualTo("john.doe@example.com");
+  }
 
-    @Test
-    void createWhenUserAlreadyExistsShouldReturnExistingUserWithoutSavingTest() {
-        // Given
-        UUID userId = UUID.randomUUID();
-        UserCreationData input =
-                UserCreationData.builder()
-                        .id(userId)
-                        .name("john.doe")
-                        .firstname("John")
-                        .lastname("Doe")
-                        .email("john.doe@example.com")
-                        .build();
-        User existingUser = new User();
-        given(userRepository.findById(any(UserId.class))).willReturn(Optional.of(existingUser));
+  @Test
+  void createWhenUserAlreadyExistsShouldReturnExistingUserWithoutSavingTest() {
+    // Given
+    UUID userId = UUID.randomUUID();
+    UserCreationData input =
+        UserCreationData.builder()
+            .id(userId)
+            .name("john.doe")
+            .firstname("John")
+            .lastname("Doe")
+            .email("john.doe@example.com")
+            .build();
+    User existingUser = new User();
+    given(userRepository.findById(any(UserId.class))).willReturn(Optional.of(existingUser));
 
-        // When
-        User result = userFactory.create(input);
+    // When
+    User result = userFactory.create(input);
 
-        // Then
-        assertThat(result).isSameAs(existingUser);
-        then(userRepository).should().findById(any(UserId.class));
-        then(userRepository).shouldHaveNoMoreInteractions();
-    }
+    // Then
+    assertThat(result).isSameAs(existingUser);
+    then(userRepository).should().findById(any(UserId.class));
+    then(userRepository).shouldHaveNoMoreInteractions();
+  }
 
-    @Test
-    void createShouldNormalizeDataTest() {
-        // Given
-        UUID userId = UUID.randomUUID();
-        UserCreationData input =
-                UserCreationData.builder()
-                        .id(userId)
-                        .name("  john.doe  ")
-                        .firstname("  John  ")
-                        .lastname(" ")
-                        .email(null)
-                        .build();
-        given(userRepository.findById(any(UserId.class))).willReturn(Optional.empty());
-        User persistedUser = new User();
-        given(userRepository.save(any(User.class))).willReturn(persistedUser);
+  @Test
+  void createShouldNormalizeDataTest() {
+    // Given
+    UUID userId = UUID.randomUUID();
+    UserCreationData input =
+        UserCreationData.builder()
+            .id(userId)
+            .name("  john.doe  ")
+            .firstname("  John  ")
+            .lastname(" ")
+            .email(null)
+            .build();
+    given(userRepository.findById(any(UserId.class))).willReturn(Optional.empty());
+    User persistedUser = new User();
+    given(userRepository.save(any(User.class))).willReturn(persistedUser);
 
-        // When
-        userFactory.create(input);
+    // When
+    userFactory.create(input);
 
-        // Then
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        then(userRepository).should().save(userCaptor.capture());
+    // Then
+    ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+    then(userRepository).should().save(userCaptor.capture());
 
-        User userToSave = userCaptor.getValue();
-        assertThat(userToSave.getName().getValue()).isEqualTo("john.doe");
-        assertThat(userToSave.getFirstname().getValue()).isEqualTo("John");
-        //        assertThat(userToSave.getLastname()).isNull();
-        assertThat(userToSave.getEmail()).isNull();
-    }
+    User userToSave = userCaptor.getValue();
+    assertThat(userToSave.getName().getValue()).isEqualTo("john.doe");
+    assertThat(userToSave.getFirstname().getValue()).isEqualTo("John");
+    //        assertThat(userToSave.getLastname()).isNull();
+    assertThat(userToSave.getEmail()).isNull();
+  }
 }

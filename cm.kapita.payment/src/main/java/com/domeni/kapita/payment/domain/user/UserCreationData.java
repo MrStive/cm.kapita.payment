@@ -6,8 +6,8 @@ import org.jspecify.annotations.Nullable;
 
 @Builder
 public record UserCreationData(
-        @Nullable UUID id,
-        @Nullable String name,
-        @Nullable String firstname,
-        @Nullable String lastname,
-        @Nullable String email) {}
+    @Nullable UUID id,
+    @Nullable String name,
+    @Nullable String firstname,
+    @Nullable String lastname,
+    @Nullable String email) {}

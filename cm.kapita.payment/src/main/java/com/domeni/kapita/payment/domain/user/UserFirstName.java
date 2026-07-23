@@ -9,13 +9,12 @@ import lombok.Getter;
 @EqualsAndHashCode
 @Getter
 public class UserFirstName {
-    private String value;
+  private String value;
 
-    @SuppressWarnings("NullAway.Init")
-    protected UserFirstName() {
-    }
+  @SuppressWarnings("NullAway.Init")
+  protected UserFirstName() {}
 
-    public UserFirstName(String value) {
-        this.value = Objects.requireNonNull(StringNormalizer.normalize(value));
-    }
+  public UserFirstName(String value) {
+    this.value = Objects.requireNonNull(StringNormalizer.normalize(value));
+  }
 }

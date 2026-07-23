@@ -1,3 +1,4 @@
+import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import java.util.jar.JarFile
@@ -479,14 +480,39 @@ sourceSets.main.get().java.srcDir(
 
 spotless {
     java {
-        target("src/**/*.java")
-        googleJavaFormat().aosp()
-        importOrder()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
-        replaceRegex("Stacktrace", "Throwable\\.printStackTrace\\(\\)", "log.error(\"\", e)")
+        targetExclude("build/**")
+        toggleOffOn()
+        googleJavaFormat("1.33.0")
+            .reflowLongStrings()
+            .formatJavadoc(true)
+            .reorderImports(true)
+            .groupArtifact("com.google.googlejavaformat:google-java-format")
     }
+    kotlin {
+        targetExclude("build/**")
+        target("**/*.kts")
+        ktlint("1.5.0")
+    }
+    format("xml", {
+        targetExclude("build/**")
+        target("src/**/*.xml")
+        eclipseWtp(EclipseWtpFormatterStep.XML)
+    })
+
+    yaml {
+        targetExclude("build/**")
+        target("src/*/resources/**/*.yaml", "src/*/resources/**/*.yml", "/specs/openapi/**/*.yaml")
+        targetExclude("src/test/resources/docker-compose.yml")
+        jackson()
+            .feature("ORDER_MAP_ENTRIES_BY_KEYS", true)
+    }
+    gherkin {
+        targetExclude("build/**")
+        target("src/test/resources/**/*.feature")
+        gherkinUtils()
+            .version("9.0.0")
+    }
+}
     jib {
         val imageNamePrefix = System.getenv("NEXUS_DOCKER_REGISTRY_URL") ?: "ghcr.io/mrstive"
         val nexusUsername = System.getenv("NEXUS_CREDENTIALS_USR") ?: ""
@@ -514,4 +540,3 @@ spotless {
         }
     }
 
-}

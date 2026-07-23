@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 @ScenarioScope
 public class CreateFlowContext {
-    private String bearerToken;
-    private Response lastResponse;
-    private UUID createdDemoId;
-    private String requestedDemoName;
+  private String bearerToken;
+  private Response lastResponse;
+  private UUID createdDemoId;
+  private String requestedDemoName;
 }

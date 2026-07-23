@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PaymentIntentRepository extends JpaRepository<PaymentIntent, PaymentIntentId> {
-    Optional<PaymentIntent> findByIdempotencyKey(String idempotencyKey);
+  Optional<PaymentIntent> findByIdempotencyKey(String idempotencyKey);
 }
