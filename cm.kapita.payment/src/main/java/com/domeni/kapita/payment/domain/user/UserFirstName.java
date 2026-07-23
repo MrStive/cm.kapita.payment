@@ -11,6 +11,10 @@ import lombok.Getter;
 public class UserFirstName {
     private String value;
 
+    @SuppressWarnings("NullAway.Init")
+    protected UserFirstName() {
+    }
+
     public UserFirstName(String value) {
         this.value = Objects.requireNonNull(StringNormalizer.normalize(value));
     }

@@ -1,1 +1,1 @@
-rootProject.name = "cm.kapita.payment"
+rootProject.name = "kapita-payment"

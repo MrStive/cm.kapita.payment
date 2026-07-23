@@ -26,7 +26,7 @@ application {
     mainClass = "com.domeni.kapita.payment.KapitaPaymentApplication"
 }
 
-version = "0.0.0-SNAPSHOT"
+version = "0.0.4-SNAPSHOT"
 group = "com.domeni.kapita.payment"
 
 val kapitaPlatformVersion =
@@ -487,4 +487,31 @@ spotless {
         endWithNewline()
         replaceRegex("Stacktrace", "Throwable\\.printStackTrace\\(\\)", "log.error(\"\", e)")
     }
+    jib {
+        val imageNamePrefix = System.getenv("NEXUS_DOCKER_REGISTRY_URL") ?: "ghcr.io/mrstive"
+        val nexusUsername = System.getenv("NEXUS_CREDENTIALS_USR") ?: ""
+        val nexusPassword = System.getenv("NEXUS_CREDENTIALS_PSW") ?: ""
+        from {
+            image = "eclipse-temurin:25-jdk"
+        }
+        to {
+            if (imageNamePrefix.isBlank()) {
+                image = project.name
+            } else {
+                image = "$imageNamePrefix/${project.name}"
+            }
+            tags = setOf("${project.version}")
+            auth {
+                username = nexusUsername
+                password = nexusPassword
+            }
+        }
+        container {
+            mainClass = "com.domeni.kapita.payment.KapitaPaymentApplication"
+            creationTime = "USE_CURRENT_TIMESTAMP"
+            jvmFlags = listOf("--enable-preview")
+            extraClasspath = listOf("/opt/liquibase-external")
+        }
+    }
+
 }
